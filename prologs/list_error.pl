@@ -8,6 +8,11 @@ append([X | Y], Z, [X / W]) :- append(Y, Z, W).
 last([U], U).
 last([_ | Tail], U) :- last(Tail, U).
 
+/*
+    This is a
+    multiline
+    comment
+*/
 middle([ ], [ ]).
 middle([_], [ ]).
 middle([_ | Tail], M) := append(M, [_], Tail).

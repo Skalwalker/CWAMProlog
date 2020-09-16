@@ -369,12 +369,12 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[32] =
+static yyconst flex_int16_t yy_accept[36] =
     {   0,
         0,    0,   18,   16,   15,    1,    6,    7,   10,   16,
         8,   16,    2,   16,    5,   12,   13,    4,    9,   15,
-        2,    0,    3,   11,    5,    4,    0,    0,    3,   14,
-        0
+        2,    0,    3,   11,    5,    0,    4,    0,    0,    0,
+        3,    5,    4,   14,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -412,45 +412,45 @@ static yyconst flex_int32_t yy_ec[256] =
 static yyconst flex_int32_t yy_meta[19] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
-        3,    1,    3,    1,    1,    3,    3,    1
+        3,    1,    3,    1,    1,    4,    3,    1
     } ;
 
-static yyconst flex_int16_t yy_base[35] =
+static yyconst flex_int16_t yy_base[41] =
     {   0,
-        0,    0,   42,   43,   17,   19,   43,   43,   43,   30,
-       43,   34,   14,   31,    0,   43,   43,    0,   43,   24,
-       19,   32,   26,   43,    0,    0,   29,   23,   21,   43,
-       43,   28,   21,   33
+        0,    0,   49,   50,   46,   50,   50,   50,   50,   36,
+       50,   40,   10,   37,   28,   50,   50,   27,   50,   40,
+       11,   35,   29,   50,   23,    0,   22,    0,   31,   17,
+       25,   17,   10,   50,   50,   25,   27,   31,   22,   21
     } ;
 
-static yyconst flex_int16_t yy_def[35] =
+static yyconst flex_int16_t yy_def[41] =
     {   0,
-       31,    1,   31,   31,   31,   31,   31,   31,   31,   31,
-       31,   31,   31,   31,   32,   31,   31,   33,   31,   31,
-       31,   34,   31,   31,   32,   33,   34,   34,   31,   31,
-        0,   31,   31,   31
+       35,    1,   35,   35,   35,   35,   35,   35,   35,   35,
+       35,   35,   35,   35,   36,   35,   35,   37,   35,   35,
+       35,   38,   35,   35,   36,   39,   37,   40,   38,   38,
+       35,   39,   40,   35,    0,   35,   35,   35,   35,   35
     } ;
 
-static yyconst flex_int16_t yy_nxt[62] =
+static yyconst flex_int16_t yy_nxt[69] =
     {   0,
         4,    5,    6,    7,    8,    4,    9,   10,   11,   12,
-       13,   14,   15,   16,   17,   15,   18,   19,   20,   20,
-       20,   20,   23,   26,   21,   20,   20,   23,   28,   21,
-       25,   29,   30,   27,   28,   27,   29,   28,   24,   22,
-       21,   31,    3,   31,   31,   31,   31,   31,   31,   31,
-       31,   31,   31,   31,   31,   31,   31,   31,   31,   31,
-       31
+       13,   14,   15,   16,   17,   15,   18,   19,   23,   23,
+       21,   21,   30,   33,   32,   28,   34,   25,   25,   27,
+       27,   29,   26,   29,   29,   31,   30,   28,   26,   31,
+       30,   20,   28,   26,   24,   22,   21,   20,   35,    3,
+       35,   35,   35,   35,   35,   35,   35,   35,   35,   35,
+       35,   35,   35,   35,   35,   35,   35,   35
     } ;
 
-static yyconst flex_int16_t yy_chk[62] =
+static yyconst flex_int16_t yy_chk[69] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    5,    5,
-        6,    6,   13,   33,   13,   20,   20,   21,   28,   21,
-       32,   29,   28,   34,   27,   34,   23,   22,   14,   12,
-       10,    3,   31,   31,   31,   31,   31,   31,   31,   31,
-       31,   31,   31,   31,   31,   31,   31,   31,   31,   31,
-       31
+        1,    1,    1,    1,    1,    1,    1,    1,   13,   21,
+       13,   21,   30,   40,   39,   33,   30,   36,   36,   37,
+       37,   38,   32,   38,   38,   31,   29,   27,   25,   23,
+       22,   20,   18,   15,   14,   12,   10,    5,    3,   35,
+       35,   35,   35,   35,   35,   35,   35,   35,   35,   35,
+       35,   35,   35,   35,   35,   35,   35,   35
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -469,16 +469,28 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "prolog_lex.l"
 /* scanner for a toy Pascal-like language */
-#line 4 "prolog_lex.l"
+#define YY_NO_INPUT 1
+#line 5 "prolog_lex.l"
 /* need this for the call to atof() below */
 #include <math.h>
 #include <string.h>
 
 int c_line = 1;
-int c_col = 1;
+int c_col = 0;
+int error_count = 0;
+int error_line = 0;
+int error_col = 0;
 char file_name[100];
+char error[100];
 
-#line 482 "lex.yy.c"
+
+void check_error(){
+        if (error_count > 0){
+                printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, error_line, error_col, error);
+        }
+        error_count = 0;
+}
+#line 494 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -537,8 +549,6 @@ extern int yywrap (void );
 #endif
 #endif
 
-    static void yyunput (int c,char *buf_ptr  );
-    
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -660,10 +670,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 20 "prolog_lex.l"
+#line 32 "prolog_lex.l"
 
 
-#line 667 "lex.yy.c"
+#line 677 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -716,13 +726,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 32 )
+				if ( yy_current_state >= 36 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 43 );
+		while ( yy_base[yy_current_state] != 50 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -749,94 +759,107 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 22 "prolog_lex.l"
-{c_col = 1; c_line++;}
+#line 34 "prolog_lex.l"
+{check_error(); c_col = 0; c_line++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 24 "prolog_lex.l"
-{c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
+#line 36 "prolog_lex.l"
+{check_error(); c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 26 "prolog_lex.l"
-{c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
+#line 38 "prolog_lex.l"
+{check_error(); c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "prolog_lex.l"
-{c_col += yyleng; printf("<CON, %s>", yytext);}
+#line 40 "prolog_lex.l"
+{check_error(); c_col += yyleng; printf("<CON, %s>", yytext);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 30 "prolog_lex.l"
-{c_col += yyleng; printf("<REF, %s>", yytext);}
+#line 42 "prolog_lex.l"
+{check_error(); c_col += yyleng; printf("<REF, %s>", yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 32 "prolog_lex.l"
-{c_col += 1; printf("<(>");}
+#line 44 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<(>");}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 34 "prolog_lex.l"
-{c_col += 1; printf("<)>");}
+#line 46 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<)>");}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 36 "prolog_lex.l"
-{c_col += 1; printf("<.>\n");}
+#line 48 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<.>\n");}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 38 "prolog_lex.l"
-{c_col += 1; printf("<|>");}
+#line 50 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<|>");}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 40 "prolog_lex.l"
-{c_col += 1; printf("<,>");}
+#line 52 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<,>");}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "prolog_lex.l"
-{c_col += 2; printf("<:->");}
+#line 54 "prolog_lex.l"
+{check_error(); c_col += 2; printf("<:->");}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 44 "prolog_lex.l"
-{c_col += 1; printf("<[>");}
+#line 56 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<[>");}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 46 "prolog_lex.l"
-{c_col += 1; printf("<]>");}
+#line 58 "prolog_lex.l"
+{check_error(); c_col += 1; printf("<]>");}
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 48 "prolog_lex.l"
-/* eat up one-line comments */
+#line 60 "prolog_lex.l"
+{
+                        check_error();
+                        for (int i=0; i < yyleng; i++){
+                                if (strncmp(&yytext[i], "\n", 1  ) == 0) {
+                                        c_line += 1;
+                                }
+                        }
+                        c_col = 0;
+                }
 	YY_BREAK
 case 15:
-/* rule 15 can match eol */
 YY_RULE_SETUP
-#line 50 "prolog_lex.l"
-{c_col += yyleng;}
+#line 71 "prolog_lex.l"
+{check_error(); c_col += yyleng;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 52 "prolog_lex.l"
-{    c_col += 1;
-        printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, c_line, c_col, yytext);
+#line 73 "prolog_lex.l"
+{
+        c_col += 1;
+        if (error_count == 0){
+                error_col = c_col;
+                error_line = c_line;
+        }
+        error[error_count] = yytext[0];
+        error_count += 1;
    }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 56 "prolog_lex.l"
+#line 83 "prolog_lex.l"
 ECHO;
 	YY_BREAK
-#line 840 "lex.yy.c"
+#line 863 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1128,7 +1151,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 32 )
+			if ( yy_current_state >= 36 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1156,50 +1179,13 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 32 )
+		if ( yy_current_state >= 36 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 31);
+	yy_is_jam = (yy_current_state == 35);
 
 	return yy_is_jam ? 0 : yy_current_state;
-}
-
-    static void yyunput (int c, register char * yy_bp )
-{
-	register char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		register yy_size_t number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
 }
 
 #ifndef YY_NO_INPUT
@@ -1833,7 +1819,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 56 "prolog_lex.l"
+#line 83 "prolog_lex.l"
 
 
 
@@ -1846,8 +1832,10 @@ int main( int argc, char **argv )
     } else {
             yyin = stdin;
     }
-
-
     yylex();
+    yylex_destroy();
+    free(file_name);
+    free(error);
+    return 0;
 }
 

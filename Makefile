@@ -1,25 +1,25 @@
-IDIR =../include
-CXX=g++
-CXXFLAGS=-I$(IDIR) -g -Wall -ftest-coverage -fprofile-arcs
+ROOT=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
+IDIR=src/include
+CC=gcc
+CFLAGS= -I$(IDIR)
 
 ODIR=obj
-LDIR =../lib
+LDIR=src/lib
 
+LIBS=-lm
 
-LIBS=-lm -lgtest -lpthread -lgtest_main --coverage -lgcov
-_DEPS = romanToArabic.hpp
+_DEPS = instruction_set.h memory.h main.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = mainTest.o romanToArabic.o
+_OBJ = main.o instruction_set.o memory.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
+$(ODIR)/%.o: $(LDIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(ODIR)/%.o: %.cpp $(DEPS)
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
-
-mainTest: $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+bin/main: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
