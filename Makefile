@@ -2,7 +2,7 @@ ROOT=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
 IDIR=src/include
 CC=gcc
-CFLAGS= -I$(IDIR)
+CFLAGS= -Wall -Wextra -pedantic -Werror -g -I$(IDIR)
 
 ODIR=obj
 LDIR=src/lib
