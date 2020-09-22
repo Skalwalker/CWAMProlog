@@ -1,5 +1,7 @@
 bin/
+!bin/.keep
 obj/
+!obj/.keep
 
 # Prerequisites
 *.d
