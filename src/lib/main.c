@@ -19,4 +19,5 @@ int main(){
 	heap_insert_head(heap, node3);
 	heap_insert_head(heap, node4);
 	destroy_heap(heap);
+	return 0;
 }
