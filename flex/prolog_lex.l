@@ -1,8 +1,7 @@
-/* scanner for a toy Pascal-like language */
+
 %option noinput nounput
 
 %{
-/* need this for the call to atof() below */
 #include <math.h>
 #include <string.h>
 
@@ -84,14 +83,17 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 int main( int argc, char **argv )
     {
+    FILE* fp;
     ++argv, --argc;  /* skip over program name */
     if ( argc > 0 ) {
-            yyin = fopen( argv[0], "r" );
+	    fp = fopen(argv[0], "r");
+            yyin = fp;
             strcpy(file_name, argv[0]);
     } else {
-            yyin = stdin;
+	    return 0;
     }
     yylex();
     yylex_destroy();
+    fclose(fp);
     return 0;
 }
