@@ -1,7 +1,10 @@
 
 %option noinput nounput
+%option noyywrap
+%option bison-bridge
 
 %{
+#include "../parser/cwam_parser.h"
 #include <math.h>
 #include <string.h>
 
@@ -32,33 +35,33 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 \n {check_error(); c_col = 0; c_line++;}
 
-{INT} {check_error(); c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
+{INT} {check_error(); c_col += yyleng; return CON;}
 
-{FLOAT}  {check_error(); c_col += yyleng; printf("<CON, %d>", atoi( yytext ));}
+{FLOAT}  {check_error(); c_col += yyleng; return CON;}
 
-{CONSTANTE}  {check_error(); c_col += yyleng; printf("<CON, %s>", yytext);}
+{CONSTANTE}  {check_error(); c_col += yyleng; return CON;}
 
-{VARIAVEL} {check_error(); c_col += yyleng; printf("<REF, %s>", yytext);}
+{VARIAVEL} {check_error(); c_col += yyleng; return VAR;}
 
-"(" {check_error(); c_col += 1; printf("<(>");}
+"(" {check_error(); c_col += 1; return '(';}
 
-")" {check_error(); c_col += 1; printf("<)>");}
+")" {check_error(); c_col += 1; return ')';}
 
-"." {check_error(); c_col += 1; printf("<.>\n");}
+"." {check_error(); c_col += 1; return '.';}
 
-"|" {check_error(); c_col += 1; printf("<|>");}
+"|" {check_error(); c_col += 1; return '|';}
 
-"," {check_error(); c_col += 1; printf("<,>");}
+"," {check_error(); c_col += 1; return ',';}
 
-":-" {check_error(); c_col += 2; printf("<:->");}
+":-" {  check_error(); c_col += 2; return RULE_SYM; }
 
-"[" {check_error(); c_col += 1; printf("<[>");}
+"[" {check_error(); c_col += 1; return '[';}
 
-"]" {check_error(); c_col += 1; printf("<]>");}
+"]" {check_error(); c_col += 1; return ']';}
 
 "/*"[^/]*"*/"  {
                         check_error();
-                        for (int i=0; i < yyleng; i++){
+                        for (unsigned long i=0; i < yyleng; i++){
                                 if (strncmp(&yytext[i], "\n", 1  ) == 0) {
                                         c_line += 1;
                                 }
@@ -81,19 +84,5 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 %%
 
-int main( int argc, char **argv )
-    {
-    FILE* fp;
-    ++argv, --argc;  /* skip over program name */
-    if ( argc > 0 ) {
-	    fp = fopen(argv[0], "r");
-            yyin = fp;
-            strcpy(file_name, argv[0]);
-    } else {
-	    return 0;
-    }
-    yylex();
-    yylex_destroy();
-    fclose(fp);
-    return 0;
-}
+
+
