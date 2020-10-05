@@ -94,8 +94,6 @@ int print_heap(Heap* heap){
         } else {
             printf("\tTail = NULL\n");
         }
-        // printf("Heap Head %d", heap->head);
-        // printf("Heap Tail %d", heap->tail);
         return HEAP_EMPTY;
     }
 
@@ -118,8 +116,6 @@ int print_heap(Heap* heap){
 
         current = current->next;
     }
-
-    // printf("NULL\n");
 
     return HEAP_PRINT_SUCCESS;
 }
