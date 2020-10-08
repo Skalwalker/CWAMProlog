@@ -122,6 +122,15 @@
 
 %start programa
 
+%destructor { free($$); } <list>
+%destructor { free($$); } <fato>
+%destructor { free($$); } <regra>
+%destructor { free($$); } <str>
+%destructor { free($$); } <strs>
+%destructor { free($$); } <term>
+%destructor { free($$); } <args>
+
+
 %%
 
 programa:
@@ -136,7 +145,7 @@ predicado:
 clausula:
     fato {print_header("Fato"); print_fact($1); print_footer();free_fact($1);}
     | regra {print_header("Regra"); print_rule($1); print_footer();free_rule($1);}
-    | error '.' {yyerrok;}
+    | error '.' {yyerrok; }
 ;
 
 fato:
