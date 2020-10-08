@@ -7,6 +7,7 @@ typedef struct symbol_table {
     UT_hash_handle hh;
 } SymbolTable;
 
+void st_delete();
 void st_add_symbol(int symbol, char *name);
 void st_print();
 
