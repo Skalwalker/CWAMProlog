@@ -2,5 +2,6 @@
 
 int main(){
 
+	execute_parser();
 	return 0;
 }

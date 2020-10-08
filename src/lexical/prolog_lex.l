@@ -35,13 +35,13 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 \n {check_error(); c_col = 0; c_line++;}
 
-{INT} {check_error(); c_col += yyleng; return CON;}
+{INT} {check_error(); c_col += yyleng;  strcpy(yylval->con, yytext); return CON;}
 
-{FLOAT}  {check_error(); c_col += yyleng; return CON;}
+{FLOAT}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 
-{CONSTANTE}  {check_error(); c_col += yyleng; return CON;}
+{CONSTANTE}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 
-{VARIAVEL} {check_error(); c_col += yyleng; return VAR;}
+{VARIAVEL} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return VAR;}
 
 "(" {check_error(); c_col += 1; return '(';}
 

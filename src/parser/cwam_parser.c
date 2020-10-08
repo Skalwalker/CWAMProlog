@@ -70,15 +70,80 @@
 #line 6 "src/parser/prolog_bison.y"
 
 	#include <stdio.h>
-	#include <ctype.h>
+    #include <stdlib.h>
+    #include <string.h>
 
-	#define YYSTYPE double
+    typedef struct node_rule NodeRule;
+    typedef struct node_str NodeStr;
+    typedef struct node_strs NodeStrs;
+    typedef struct node_args NodeArgs;
+    typedef struct node_term NodeTerm;
+    typedef struct node_fact NodeFact;
+    typedef struct node_list NodeList;
 
-	// int yylex (void);
+    struct node_fact {
+        char op;
+        NodeStr *one;
+    };
+
+    struct node_rule {
+        char op;
+        NodeStr *one;
+        NodeStrs *two;
+    };
+
+    struct node_str {
+        char op;
+        NodeArgs *one;
+        char nome[100];
+    };
+
+    struct node_strs {
+        char op;
+        NodeStr *one;
+        NodeStrs *two;
+    };
+
+    struct node_args {
+        char op;
+        NodeTerm *one;
+        NodeArgs *two;
+
+    };
+
+    struct node_term {
+        NodeStr *one;
+        NodeList *two;
+        char nome[100];
+    };
+
+    struct node_list {
+        NodeTerm *one;
+        NodeTerm *two;
+    };
+
+
+    NodeFact* new_node_fact(NodeStr* one, char op);
+    NodeRule* new_node_rule(NodeStr* one, NodeStrs* two, char op);
+    NodeStr* new_node_str(NodeArgs* one, char nome[], char op);
+    NodeStrs* new_node_strs(NodeStr* one, NodeStrs* two, char op);
+    NodeArgs* new_node_args(NodeTerm* one, NodeArgs* two, char op);
+    NodeTerm* new_node_term(NodeStr* one, NodeList* two, char nome[]);
+    NodeList* new_node_list(NodeTerm* one, NodeTerm* two);
+
+    void print_str(NodeStr *root);
+    void print_strs(NodeStrs *root);
+    void print_args(NodeArgs *root);
+    void print_term(NodeTerm *root);
+    void print_fact(NodeFact *root);
+    void print_rule(NodeRule *root);
+    void print_list(NodeList *root);
+
+    int execute_parser (void);
 	void yyerror (char const *);
     int yylex();
 
-#line 82 "src/parser/cwam_parser.c"
+#line 147 "src/parser/cwam_parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -111,22 +176,25 @@ enum yysymbol_kind_t
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
   YYSYMBOL_CON = 3,                        /* CON  */
   YYSYMBOL_VAR = 4,                        /* VAR  */
-  YYSYMBOL_LIS = 5,                        /* LIS  */
-  YYSYMBOL_RULE_SYM = 6,                   /* RULE_SYM  */
-  YYSYMBOL_7_ = 7,                         /* '.'  */
-  YYSYMBOL_8_ = 8,                         /* ','  */
-  YYSYMBOL_9_ = 9,                         /* '('  */
-  YYSYMBOL_10_ = 10,                       /* ')'  */
-  YYSYMBOL_YYACCEPT = 11,                  /* $accept  */
-  YYSYMBOL_programa = 12,                  /* programa  */
-  YYSYMBOL_predicado = 13,                 /* predicado  */
-  YYSYMBOL_clausula = 14,                  /* clausula  */
-  YYSYMBOL_fato = 15,                      /* fato  */
-  YYSYMBOL_regra = 16,                     /* regra  */
-  YYSYMBOL_estruturas = 17,                /* estruturas  */
-  YYSYMBOL_estrutura = 18,                 /* estrutura  */
-  YYSYMBOL_argumentos = 19,                /* argumentos  */
-  YYSYMBOL_termo = 20                      /* termo  */
+  YYSYMBOL_RULE_SYM = 5,                   /* RULE_SYM  */
+  YYSYMBOL_6_ = 6,                         /* '.'  */
+  YYSYMBOL_7_ = 7,                         /* ','  */
+  YYSYMBOL_8_ = 8,                         /* '('  */
+  YYSYMBOL_9_ = 9,                         /* ')'  */
+  YYSYMBOL_10_ = 10,                       /* '['  */
+  YYSYMBOL_11_ = 11,                       /* ']'  */
+  YYSYMBOL_12_ = 12,                       /* '|'  */
+  YYSYMBOL_YYACCEPT = 13,                  /* $accept  */
+  YYSYMBOL_programa = 14,                  /* programa  */
+  YYSYMBOL_predicado = 15,                 /* predicado  */
+  YYSYMBOL_clausula = 16,                  /* clausula  */
+  YYSYMBOL_fato = 17,                      /* fato  */
+  YYSYMBOL_regra = 18,                     /* regra  */
+  YYSYMBOL_estruturas = 19,                /* estruturas  */
+  YYSYMBOL_estrutura = 20,                 /* estrutura  */
+  YYSYMBOL_argumentos = 21,                /* argumentos  */
+  YYSYMBOL_termo = 22,                     /* termo  */
+  YYSYMBOL_list = 23                       /* list  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -436,19 +504,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  9
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   23
+#define YYLAST   29
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  11
+#define YYNTOKENS  13
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  18
+#define YYNRULES  20
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  28
+#define YYNSTATES  33
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   261
+#define YYMAXUTOK   260
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -466,15 +534,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       9,    10,     2,     2,     8,     2,     7,     2,     2,     2,
+       8,     9,     2,     2,     7,     2,     6,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    10,     2,    11,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    12,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -488,15 +556,16 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6
+       5
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    25,    25,    26,    30,    31,    35,    36,    40,    44,
-      48,    49,    53,    54,    58,    59,    63,    64,    65
+       0,   111,   111,   115,   116,   120,   121,   125,   129,   133,
+     134,   138,   139,   143,   144,   148,   149,   150,   154,   155,
+     156
 };
 #endif
 
@@ -512,10 +581,10 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "CON", "VAR", "LIS",
-  "RULE_SYM", "'.'", "','", "'('", "')'", "$accept", "programa",
-  "predicado", "clausula", "fato", "regra", "estruturas", "estrutura",
-  "argumentos", "termo", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "CON", "VAR",
+  "RULE_SYM", "'.'", "','", "'('", "')'", "'['", "']'", "'|'", "$accept",
+  "programa", "predicado", "clausula", "fato", "regra", "estruturas",
+  "estrutura", "argumentos", "termo", "list", YY_NULLPTR
 };
 
 static const char *
@@ -530,12 +599,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,    46,    44,    40,
-      41
+       0,   256,   257,   258,   259,   260,    46,    44,    40,    41,
+      91,    93,   124
 };
 #endif
 
-#define YYPACT_NINF (-9)
+#define YYPACT_NINF (-14)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -549,9 +618,10 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       9,    -6,     2,     9,    -9,    -9,    -9,     0,     6,    -9,
-       9,    -9,     9,    -9,    -9,    -9,    -9,     3,     7,    10,
-      11,    -9,     6,    -9,     9,    -9,    13,    -9
+      -1,    -4,    18,    -1,   -14,   -14,   -14,    11,     4,   -14,
+     -14,    -1,   -14,   -14,     2,   -14,    10,    13,   -14,    15,
+      16,   -14,    -2,   -14,     4,   -14,    -1,   -14,     4,   -14,
+     -14,    14,   -14
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -559,21 +629,24 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    12,     0,     2,     4,     6,     7,     0,     0,     1,
-       3,     5,     0,     8,    17,    18,    16,     0,    14,     0,
-      10,    13,     0,     9,     0,    15,     0,    11
+       0,    11,     0,     2,     3,     5,     6,     0,     0,     1,
+       4,     0,     7,    16,     0,    15,     0,    13,    17,     0,
+       9,    18,     0,    12,     0,     8,     0,    19,     0,    14,
+      10,     0,    20
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -9,    -9,    16,    -2,    -9,    -9,    -3,    -8,     1,    -9
+     -14,   -14,   -14,    19,   -14,   -14,     1,     0,     5,   -13,
+     -14
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,     5,     6,    19,     7,    17,    18
+      -1,     2,     3,     4,     5,     6,    19,    15,    16,    17,
+      18
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -581,39 +654,42 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      16,    11,     9,     8,    20,     1,    12,    13,    11,     1,
-      14,    15,     1,    21,    16,    22,    20,    23,    10,    24,
-      27,    26,     0,    25
+       7,    22,     1,     7,     8,     1,    13,     1,    13,    27,
+      28,    20,    14,    21,    14,    31,    11,    12,     9,    23,
+      24,    25,    10,    26,     0,    32,    20,    30,     0,    29
 };
 
 static const yytype_int8 yycheck[] =
 {
-       8,     3,     0,     9,    12,     3,     6,     7,    10,     3,
-       4,     5,     3,    10,    22,     8,    24,     7,     2,     8,
-       7,    24,    -1,    22
+       0,    14,     3,     3,     8,     3,     4,     3,     4,    11,
+      12,    11,    10,    11,    10,    28,     5,     6,     0,     9,
+       7,     6,     3,     7,    -1,    11,    26,    26,    -1,    24
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    12,    13,    14,    15,    16,    18,     9,     0,
-      13,    14,     6,     7,     4,     5,    18,    19,    20,    17,
-      18,    10,     8,     7,     8,    19,    17,     7
+       0,     3,    14,    15,    16,    17,    18,    20,     8,     0,
+      16,     5,     6,     4,    10,    20,    21,    22,    23,    19,
+      20,    11,    22,     9,     7,     6,     7,    11,    12,    21,
+      19,    22,    11
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    11,    12,    12,    13,    13,    14,    14,    15,    16,
-      17,    17,    18,    18,    19,    19,    20,    20,    20
+       0,    13,    14,    15,    15,    16,    16,    17,    18,    19,
+      19,    20,    20,    21,    21,    22,    22,    22,    23,    23,
+      23
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     2,     1,     2,     1,     1,     2,     4,
-       1,     4,     1,     4,     1,     3,     1,     1,     1
+       0,     2,     1,     1,     2,     1,     1,     2,     4,     1,
+       3,     1,     4,     1,     3,     1,     1,     1,     2,     3,
+       5
 };
 
 
@@ -1356,8 +1432,104 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 5: /* clausula: fato  */
+#line 120 "src/parser/prolog_bison.y"
+         {printf("Arvore Fato: \n"); print_fact((yyvsp[0].fato));}
+#line 1439 "src/parser/cwam_parser.c"
+    break;
 
-#line 1361 "src/parser/cwam_parser.c"
+  case 6: /* clausula: regra  */
+#line 121 "src/parser/prolog_bison.y"
+            {printf("Arvore Regra: \n"); print_rule((yyvsp[0].regra));}
+#line 1445 "src/parser/cwam_parser.c"
+    break;
+
+  case 7: /* fato: estrutura '.'  */
+#line 125 "src/parser/prolog_bison.y"
+                  {(yyval.fato) = new_node_fact((yyvsp[-1].str), '.');}
+#line 1451 "src/parser/cwam_parser.c"
+    break;
+
+  case 8: /* regra: estrutura RULE_SYM estruturas '.'  */
+#line 129 "src/parser/prolog_bison.y"
+                                      {(yyval.regra) = new_node_rule((yyvsp[-3].str), (yyvsp[-1].strs), '.');}
+#line 1457 "src/parser/cwam_parser.c"
+    break;
+
+  case 9: /* estruturas: estrutura  */
+#line 133 "src/parser/prolog_bison.y"
+              {(yyval.strs) = new_node_strs((yyvsp[0].str), NULL, '\0');}
+#line 1463 "src/parser/cwam_parser.c"
+    break;
+
+  case 10: /* estruturas: estrutura ',' estruturas  */
+#line 134 "src/parser/prolog_bison.y"
+                               {(yyval.strs) = new_node_strs((yyvsp[-2].str), (yyvsp[0].strs), ',');}
+#line 1469 "src/parser/cwam_parser.c"
+    break;
+
+  case 11: /* estrutura: CON  */
+#line 138 "src/parser/prolog_bison.y"
+        {(yyval.str) = new_node_str(NULL, (yyvsp[0].con), '\0');}
+#line 1475 "src/parser/cwam_parser.c"
+    break;
+
+  case 12: /* estrutura: CON '(' argumentos ')'  */
+#line 139 "src/parser/prolog_bison.y"
+                             {(yyval.str) = new_node_str((yyvsp[-1].args), (yyvsp[-3].con), ')');}
+#line 1481 "src/parser/cwam_parser.c"
+    break;
+
+  case 13: /* argumentos: termo  */
+#line 143 "src/parser/prolog_bison.y"
+          {(yyval.args) = new_node_args((yyvsp[0].term), NULL, '\0');}
+#line 1487 "src/parser/cwam_parser.c"
+    break;
+
+  case 14: /* argumentos: termo ',' argumentos  */
+#line 144 "src/parser/prolog_bison.y"
+                           {(yyval.args) = new_node_args((yyvsp[-2].term), (yyvsp[0].args), ',');}
+#line 1493 "src/parser/cwam_parser.c"
+    break;
+
+  case 15: /* termo: estrutura  */
+#line 148 "src/parser/prolog_bison.y"
+              {(yyval.term) = new_node_term((yyvsp[0].str), NULL, "\0");}
+#line 1499 "src/parser/cwam_parser.c"
+    break;
+
+  case 16: /* termo: VAR  */
+#line 149 "src/parser/prolog_bison.y"
+          {(yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].var));}
+#line 1505 "src/parser/cwam_parser.c"
+    break;
+
+  case 17: /* termo: list  */
+#line 150 "src/parser/prolog_bison.y"
+           {(yyval.term) = new_node_term(NULL, (yyvsp[0].list), "\0");}
+#line 1511 "src/parser/cwam_parser.c"
+    break;
+
+  case 18: /* list: '[' ']'  */
+#line 154 "src/parser/prolog_bison.y"
+            {(yyval.list) = new_node_list(NULL, NULL);}
+#line 1517 "src/parser/cwam_parser.c"
+    break;
+
+  case 19: /* list: '[' termo ']'  */
+#line 155 "src/parser/prolog_bison.y"
+                    {(yyval.list) = new_node_list((yyvsp[-1].term), NULL);}
+#line 1523 "src/parser/cwam_parser.c"
+    break;
+
+  case 20: /* list: '[' termo '|' termo ']'  */
+#line 156 "src/parser/prolog_bison.y"
+                              {(yyval.list) = new_node_list((yyvsp[-3].term), (yyvsp[-1].term));}
+#line 1529 "src/parser/cwam_parser.c"
+    break;
+
+
+#line 1533 "src/parser/cwam_parser.c"
 
       default: break;
     }
@@ -1582,37 +1754,164 @@ yyreturn:
   return yyresult;
 }
 
-#line 68 "src/parser/prolog_bison.y"
+#line 159 "src/parser/prolog_bison.y"
 
 
-// int yylex (void) {
-// 	int c;
+NodeFact* new_node_fact(NodeStr* one, char op) {
+	NodeFact *e = (NodeFact*) malloc(sizeof(NodeFact));
+	e->one = one;
+    e->op = op;
+	return e;
+}
 
-// 	/* Skip white space. */
-// 	while ((c = getchar ()) == ' ' || c == '\t')
-// 		continue;
+NodeRule* new_node_rule(NodeStr* one, NodeStrs* two, char op) {
+	NodeRule *e = (NodeRule*) malloc(sizeof(NodeRule));
+	e->one = one;
+	e->two = two;
+    e->op = op;
+	return e;
+}
 
-// 	/* Process numbers. */
-// 	if (c == '.' || isdigit (c))
-// 	{
-// 		ungetc (c, stdin);
-// 		scanf ("%lf", &yylval);
-// 		return NUM;
-// 	}
+NodeStr* new_node_str(NodeArgs* one, char nome[], char op) {
+	NodeStr *e = (NodeStr*) malloc(sizeof(NodeStr));
+    e->one = one;
+    e->op = op;
+    strcpy(e->nome, nome);
 
-// 	/* Return end-of-input. */
-// 	if (c == EOF)
-// 		return 0;
+	return e;
+}
 
-// 	/* Return a single char. */
-// 	return c;
+NodeStrs* new_node_strs(NodeStr* one, NodeStrs* two, char op) {
+	NodeStrs *e = (NodeStrs*) malloc(sizeof(NodeStrs));
+	e->one = one;
+	e->two = two;
+    e->op = op;
+	return e;
+}
+
+NodeArgs* new_node_args(NodeTerm* one, NodeArgs* two, char op) {
+	NodeArgs *e = (NodeArgs*) malloc(sizeof(NodeArgs));
+	e->one = one;
+	e->two = two;
+    e->op = op;
+	return e;
+}
+
+NodeTerm* new_node_term(NodeStr* one, NodeList* two, char nome[]) {
+	NodeTerm *e = (NodeTerm*) malloc(sizeof(NodeTerm));
+	e->one = one;
+    e->two = two;
+    strcpy(e->nome, nome);
+	return e;
+}
+
+NodeList* new_node_list(NodeTerm* one, NodeTerm* two) {
+	NodeList *e = (NodeList*) malloc(sizeof(NodeList));
+	e->one = one;
+    e->two = two;
+	return e;
+}
+
+
+void print_str(NodeStr *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    printf("%s\n", root->nome);
+    if (root->op != '\0') {
+        printf("(\n");
+    }
+
+    print_args(root->one);
+
+    if (root->op != '\0'){
+        printf(")\n");
+    }
+}
+
+void print_strs(NodeStrs *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    print_str(root->one);
+    if (root->op != '\0') printf("%c\n", root->op);
+    print_strs(root->two);
+}
+
+void print_args(NodeArgs *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    print_term(root->one);
+    if (root->op != '\0') printf("%c\n", root->op);
+    print_args(root->two);
+}
+
+void print_term(NodeTerm *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    if (root->nome[0] != '\0') {
+        printf("%s\n", root->nome);
+    } else if(root->one != NULL) {
+        print_str(root->one);
+    } else {
+        print_list(root->two);
+    }
+}
+
+void print_list(NodeList *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    printf("[\n");
+    print_term(root->one);
+    if (root->two != NULL) printf("|\n");
+    print_term(root->two);
+    printf("]\n");
+}
+
+void print_fact(NodeFact *root) {
+
+    if (root == NULL) {
+        return;
+    }
+
+    print_str(root->one);
+
+    printf("%c", root->op);
+}
+
+void print_rule(NodeRule *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    print_str(root->one);
+    printf(":-\n");
+    print_strs(root->two);
+    printf(".\n");
+}
+
+
+// void free_tree(Node *root) {
+// 	if (root->one) free_tree(root->one);
+// 	if (root->two) free_tree(root->two);
+//     if (root->three) free_tree(root->three);
+// 	if (root->four) free_tree(root->four);
+// 	free(root);
 // }
 
 void yyerror (char const *s) {
 	fprintf (stderr, "%s\n", s);
 }
 
-int main (void) {
+int execute_parser (void) {
 	return yyparse();
 }
 
@@ -1632,3 +1931,5 @@ int main (void) {
 //     fclose(fp);
 //     return 0;
 // }
+
+//  | programa predicado

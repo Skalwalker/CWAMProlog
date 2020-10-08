@@ -56,15 +56,31 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     CON = 258,                     /* CON  */
     VAR = 259,                     /* VAR  */
-    LIS = 260,                     /* LIS  */
-    RULE_SYM = 261                 /* RULE_SYM  */
+    RULE_SYM = 260                 /* RULE_SYM  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 82 "src/parser/prolog_bison.y"
+
+    char con[100];
+    char var[100];
+    struct node_fact *fato;
+    struct node_rule *regra;
+    struct node_str *str;
+    struct node_strs *strs;
+    struct node_term *term;
+    struct node_args *args;
+    struct node_list *list;
+
+#line 81 "src/parser/cwam_parser.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

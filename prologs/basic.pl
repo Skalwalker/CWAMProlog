@@ -21,3 +21,33 @@ ensina(teo, csc134).
 ensina C e Y estua C */
 professor(X, Aluno) :- ensina(X, Aula_1), estuda(Aluno, Aula_1).
 
+
+/*
+{printf("Arvore Fato: \n"); print_fact($1);}
+
+estuda
+    (
+        khalil ,
+        iaa_2_Noturno
+    )
+.
+
+professor
+    (
+        X ,
+        Aluno
+    )
+:-
+ensina
+    (
+        X,
+        Aula_1
+    )
+, estuda
+    (
+        Aluno,
+        Aula_1
+    )
+.
+
+*/
