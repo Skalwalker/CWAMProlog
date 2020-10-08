@@ -46,22 +46,12 @@ void st_print() {
     printf("==============================\n");
 }
 
+void st_delete() {
+  SymbolTable *current_table, *tmp;
 
-// void add_str(int user_id, char *name) {
-//     struct my_struct *s;
-
-//     s = malloc(sizeof(struct my_struct));
-//     s->id = user_id;
-//     strcpy(s->name, name);
-//     HASH_ADD_INT( users, id, s );  /* id: name of key field */
-// }
-
-// void add_list(int user_id, char *name) {
-//     struct my_struct *s;
-
-//     s = malloc(sizeof(struct my_struct));
-//     s->id = user_id;
-//     strcpy(s->name, name);
-//     HASH_ADD_INT( users, id, s );  /* id: name of key field */
-// }
+  HASH_ITER(hh, s_table, current_table, tmp) {
+    HASH_DEL(s_table,current_table);  /* delete; users advances to next */
+    free(current_table);            /* optional- if you want to free  */
+  }
+}
 

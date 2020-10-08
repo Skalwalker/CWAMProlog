@@ -9,3 +9,5 @@ typedef struct symbol_table {
 
 void st_add_symbol(int symbol, char *name);
 void st_print();
+
+
