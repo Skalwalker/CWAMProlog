@@ -1258,43 +1258,43 @@ yydestruct (const char *yymsg,
     {
     case YYSYMBOL_fato: /* fato  */
 #line 126 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).fato)); }
+            { free_fact(((*yyvaluep).fato)); }
 #line 1263 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_regra: /* regra  */
 #line 127 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).regra)); }
+            { free_rule(((*yyvaluep).regra)); }
 #line 1269 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estruturas: /* estruturas  */
 #line 129 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).strs)); }
+            { free_strs(((*yyvaluep).strs)); }
 #line 1275 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estrutura: /* estrutura  */
 #line 128 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).str)); }
+            { free_str(((*yyvaluep).str)); }
 #line 1281 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_argumentos: /* argumentos  */
 #line 131 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).args)); }
+            { free_args(((*yyvaluep).args)); }
 #line 1287 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_termo: /* termo  */
 #line 130 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).term)); }
+            { free_term(((*yyvaluep).term)); }
 #line 1293 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_list: /* list  */
 #line 125 "src/parser/prolog_bison.y"
-            { free(((*yyvaluep).list)); }
+            { free_list(((*yyvaluep).list)); }
 #line 1299 "src/parser/cwam_parser.c"
         break;
 

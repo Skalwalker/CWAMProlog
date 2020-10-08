@@ -122,13 +122,13 @@
 
 %start programa
 
-%destructor { free($$); } <list>
-%destructor { free($$); } <fato>
-%destructor { free($$); } <regra>
-%destructor { free($$); } <str>
-%destructor { free($$); } <strs>
-%destructor { free($$); } <term>
-%destructor { free($$); } <args>
+%destructor { free_list($$); } <list>
+%destructor { free_fact($$); } <fato>
+%destructor { free_rule($$); } <regra>
+%destructor { free_str($$); } <str>
+%destructor { free_strs($$); } <strs>
+%destructor { free_term($$); } <term>
+%destructor { free_args($$); } <args>
 
 
 %%
