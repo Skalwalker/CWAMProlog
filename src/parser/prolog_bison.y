@@ -7,6 +7,10 @@
 	#include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "../wam/include/main.h"
+
+    extern char file_name[];
+    extern int yylineno;
 
     typedef struct node_rule NodeRule;
     typedef struct node_str NodeStr;
@@ -73,11 +77,17 @@
     void print_fact(NodeFact *root);
     void print_rule(NodeRule *root);
     void print_list(NodeList *root);
+    void eat_to_newline(void);
 
-    int execute_parser (void);
+    void print_header(char tipo[]);
+    void print_footer();
+
+    int yyparse(void);
 	void yyerror (char const *);
     int yylex();
 %}
+
+%locations
 
 %union {
     char con[100];
@@ -108,7 +118,7 @@
 %%
 
 programa:
-     predicado
+    predicado
 ;
 
 predicado:
@@ -117,8 +127,9 @@ predicado:
 ;
 
 clausula:
-    fato {printf("Arvore Fato: \n"); print_fact($1);}
-    | regra {printf("Arvore Regra: \n"); print_rule($1);}
+    fato {print_header("Fato"); print_fact($1); print_footer();}
+    | regra {print_header("Regra"); print_rule($1); print_footer();}
+    | error '.' {yyerrok;}
 ;
 
 fato:
@@ -135,8 +146,8 @@ estruturas:
 ;
 
 estrutura:
-    CON {$$ = new_node_str(NULL, $1, '\0');}
-    | CON '(' argumentos ')' {$$ = new_node_str($3, $1, ')');}
+    CON {$$ = new_node_str(NULL, $1, '\0');  st_add_symbol(CON_SYMBOL, $1);}
+    | CON '(' argumentos ')' {$$ = new_node_str($3, $1, ')'); st_add_symbol(STR_SYMBOL, $1);}
 ;
 
 argumentos:
@@ -151,9 +162,9 @@ termo:
 ;
 
 list:
-    '[' ']' {$$ = new_node_list(NULL, NULL);}
-    | '[' termo ']' {$$ = new_node_list($2, NULL);}
-    | '[' termo '|' termo ']' {$$ = new_node_list($2, $4);}
+    '[' ']' {$$ = new_node_list(NULL, NULL); st_add_symbol(LIS_SYMBOL, "[]");}
+    | '[' termo ']' {$$ = new_node_list($2, NULL);  st_add_symbol(LIS_SYMBOL, "[TERMS]");}
+    | '[' termo '|' termo ']' {$$ = new_node_list($2, $4);st_add_symbol(LIS_SYMBOL, "[TERMS|TERMS]");}
 ;
 
 %%
@@ -299,6 +310,14 @@ void print_rule(NodeRule *root) {
     printf(".\n");
 }
 
+void print_header(char tipo[]){
+    printf("\n\n=====================Arvore %s, Linha %d=====================\n", tipo, yylineno);
+}
+
+void print_footer(){
+    printf("\n=========================================================\n");
+}
+
 
 // void free_tree(Node *root) {
 // 	if (root->one) free_tree(root->one);
@@ -307,30 +326,3 @@ void print_rule(NodeRule *root) {
 // 	if (root->four) free_tree(root->four);
 // 	free(root);
 // }
-
-void yyerror (char const *s) {
-	fprintf (stderr, "%s\n", s);
-}
-
-int execute_parser (void) {
-	return yyparse();
-}
-
-// int main( int argc, char **argv )
-//     {
-//     FILE* fp;
-//     ++argv, --argc;  /* skip over program name */
-//     if ( argc > 0 ) {
-// 	    fp = fopen(argv[0], "r");
-//             yyin = fp;
-//             strcpy(file_name, argv[0]);
-//     } else {
-// 	    return 0;
-//     }
-//     yylex();
-//     yylex_destroy();
-//     fclose(fp);
-//     return 0;
-// }
-
-//  | programa predicado

@@ -1,7 +1,24 @@
 #include "../include/main.h"
 
-int main(){
+extern FILE *yyin;
 
-	execute_parser();
+char file_name[100];
+
+SymbolTable *s_table = NULL;
+
+int main(int argc, char **argv){
+    FILE* fp;
+    ++argv, --argc;  /* skip over program name */
+    if ( argc > 0 ) {
+	    fp = fopen(argv[0], "r");
+        yyin = fp;
+        strcpy(file_name, argv[0]);
+    } else {
+	    printf("Prolog Rule File Missing! Ending Execution...\n");
+		return 0;
+    }
+
+	yyparse();
+    st_print();
 	return 0;
 }
