@@ -19,7 +19,7 @@ $(ODIR)/%.o: $(LDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 bin/main: $(OBJ)
-	bison src/parser/prolog_bison.y -Wcounterexamples --output=src/parser/cwam_parser.c
+	bison src/parser/prolog_bison.y --output=src/parser/cwam_parser.c
 	flex -o src/lexical/cwam_lex.yy.c src/lexical/prolog_lex.l
 	$(CC) -c -o obj/cwam_lex.yy.o src/lexical/cwam_lex.yy.c $(CFLAGS)
 	$(CC) -c -o obj/cwam_parser.o src/parser/cwam_parser.c $(CFLAGS)

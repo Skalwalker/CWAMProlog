@@ -20,5 +20,6 @@ int main(int argc, char **argv){
 
 	yyparse();
     st_print();
+    st_delete();
 	return 0;
 }

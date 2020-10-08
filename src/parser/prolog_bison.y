@@ -77,7 +77,14 @@
     void print_fact(NodeFact *root);
     void print_rule(NodeRule *root);
     void print_list(NodeList *root);
-    void eat_to_newline(void);
+
+    void free_fact(NodeFact *root);
+    void free_rule(NodeRule *root);
+    void free_str(NodeStr *root);
+    void free_strs(NodeStrs *root);
+    void free_args(NodeArgs *root);
+    void free_term(NodeTerm *root);
+    void free_list(NodeList *root);
 
     void print_header(char tipo[]);
     void print_footer();
@@ -127,8 +134,8 @@ predicado:
 ;
 
 clausula:
-    fato {print_header("Fato"); print_fact($1); print_footer();}
-    | regra {print_header("Regra"); print_rule($1); print_footer();}
+    fato {print_header("Fato"); print_fact($1); print_footer();free_fact($1);}
+    | regra {print_header("Regra"); print_rule($1); print_footer();free_rule($1);}
     | error '.' {yyerrok;}
 ;
 
@@ -319,10 +326,45 @@ void print_footer(){
 }
 
 
-// void free_tree(Node *root) {
-// 	if (root->one) free_tree(root->one);
-// 	if (root->two) free_tree(root->two);
-//     if (root->three) free_tree(root->three);
-// 	if (root->four) free_tree(root->four);
-// 	free(root);
-// }
+void free_fact(NodeFact *root) {
+	if (root->one) free_str(root->one);
+	free(root);
+}
+
+void free_rule(NodeRule *root) {
+	if (root->one) free_str(root->one);
+	if (root->two) free_strs(root->two);
+	free(root);
+}
+
+void free_str(NodeStr *root) {
+	if (root->one) free_args(root->one);
+
+	free(root);
+}
+
+void free_strs(NodeStrs *root) {
+	if (root->one) free_str(root->one);
+	if (root->two) free_strs(root->two);
+	free(root);
+}
+
+void free_args(NodeArgs *root) {
+	if (root->one) free_term(root->one);
+	if (root->two) free_args(root->two);
+
+	free(root);
+}
+
+void free_term(NodeTerm *root) {
+	if (root->one) free_str(root->one);
+	if (root->two) free_list(root->two);
+
+	free(root);
+}
+
+void free_list(NodeList *root) {
+	if (root->one) free_term(root->one);
+	if (root->two) free_term(root->two);
+	free(root);
+}
