@@ -167,7 +167,20 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-    #define YY_LESS_LINENO(n)
+    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
+     *       access to the local variable yy_act. Since yyless() is a macro, it would break
+     *       existing scanners that call yyless() from OUTSIDE yylex. 
+     *       One obvious solution it to make yy_act a global. I tried that, and saw
+     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
+     *       normally declared as a register variable-- so it is not worth it.
+     */
+    #define  YY_LESS_LINENO(n) \
+            do { \
+                yy_size_t yyl;\
+                for ( yyl = n; yyl < yyleng; ++yyl )\
+                    if ( yytext[yyl] == '\n' )\
+                        --yylineno;\
+            }while(0)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -457,6 +470,11 @@ static yyconst flex_int16_t yy_chk[69] =
        35,   35,   35,   35,   35,   35,   35,   35
     } ;
 
+/* Table of booleans, true if rule could match eol. */
+static yyconst flex_int32_t yy_rule_can_match_eol[18] =
+    {   0,
+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,     };
+
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -473,10 +491,14 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "src/lexical/prolog_lex.l"
 #define YY_NO_INPUT 1
-#line 7 "src/lexical/prolog_lex.l"
+#line 6 "src/lexical/prolog_lex.l"
+#include "../wam/include/main.h"
 #include "../parser/cwam_parser.h"
+
 #include <math.h>
 #include <string.h>
+
+extern SymbolTable *s_table;
 
 int c_line = 1;
 int c_col = 0;
@@ -484,8 +506,10 @@ int error_count = 0;
 int error_line = 0;
 int error_col = 0;
 char file_name[100];
-char error[100];
+char error[200];
+char progr_errors[100][200];
 
+void yyerror (char const *);
 
 void check_error(){
         if (error_count > 0){
@@ -493,7 +517,7 @@ void check_error(){
         }
         error_count = 0;
 }
-#line 497 "src/lexical/cwam_lex.yy.c"
+#line 521 "src/lexical/cwam_lex.yy.c"
 
 #define INITIAL 0
 
@@ -681,10 +705,10 @@ YY_DECL
     
         YYSTYPE * yylval;
     
-#line 34 "src/lexical/prolog_lex.l"
+#line 41 "src/lexical/prolog_lex.l"
 
 
-#line 688 "src/lexical/cwam_lex.yy.c"
+#line 712 "src/lexical/cwam_lex.yy.c"
 
     yylval = yylval_param;
 
@@ -758,6 +782,16 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
+		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
+			{
+			yy_size_t yyl;
+			for ( yyl = 0; yyl < yyleng; ++yyl )
+				if ( yytext[yyl] == '\n' )
+					   
+    yylineno++;
+;
+			}
+
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -772,73 +806,73 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 36 "src/lexical/prolog_lex.l"
+#line 43 "src/lexical/prolog_lex.l"
 {check_error(); c_col = 0; c_line++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 38 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; return CON;}
+#line 45 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng;  strcpy(yylval->con, yytext); return CON;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 40 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; return CON;}
+#line 47 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 42 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; return CON;}
+#line 49 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 44 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; return VAR;}
+#line 51 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext); return VAR;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 46 "src/lexical/prolog_lex.l"
+#line 53 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '(';}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 48 "src/lexical/prolog_lex.l"
+#line 55 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ')';}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 50 "src/lexical/prolog_lex.l"
+#line 57 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '.';}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 52 "src/lexical/prolog_lex.l"
+#line 59 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '|';}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 54 "src/lexical/prolog_lex.l"
+#line 61 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ',';}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 56 "src/lexical/prolog_lex.l"
+#line 63 "src/lexical/prolog_lex.l"
 {  check_error(); c_col += 2; return RULE_SYM; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 58 "src/lexical/prolog_lex.l"
+#line 65 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '[';}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 60 "src/lexical/prolog_lex.l"
+#line 67 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ']';}
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 62 "src/lexical/prolog_lex.l"
+#line 69 "src/lexical/prolog_lex.l"
 {
                         check_error();
                         for (unsigned long i=0; i < yyleng; i++){
@@ -851,12 +885,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 73 "src/lexical/prolog_lex.l"
+#line 80 "src/lexical/prolog_lex.l"
 {check_error(); c_col += yyleng;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 75 "src/lexical/prolog_lex.l"
+#line 82 "src/lexical/prolog_lex.l"
 {
         c_col += 1;
         if (error_count == 0){
@@ -869,10 +903,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 85 "src/lexical/prolog_lex.l"
+#line 92 "src/lexical/prolog_lex.l"
 ECHO;
 	YY_BREAK
-#line 876 "src/lexical/cwam_lex.yy.c"
+#line 910 "src/lexical/cwam_lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1270,6 +1304,11 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
+
+	if ( c == '\n' )
+		   
+    yylineno++;
+;
 
 	return c;
 }
@@ -1740,6 +1779,9 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
+    /* We do not touch yylineno unless the option is enabled. */
+    yylineno =  1;
+    
     (yy_buffer_stack) = 0;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -1832,10 +1874,14 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "src/lexical/prolog_lex.l"
+#line 92 "src/lexical/prolog_lex.l"
 
 
 
+void yyerror (char const *s) {
+    printf("ERROR: %s:%d:%d:", file_name, yylineno, error_col);
+	printf("%s\n", s);
+}
 
 
 

@@ -3,8 +3,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DEBUG 1
+
+enum DATATYPES {
+    REF_SYMBOL = 1,
+    STR_SYMBOL = 2,
+    CON_SYMBOL = 3,
+    LIS_SYMBOL = 4,
+};
 
 enum CODES {
     HEAP_CREATE_SUCCESS = 110,
