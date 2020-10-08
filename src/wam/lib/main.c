@@ -1,6 +1,7 @@
 #include "../include/main.h"
 
 extern FILE *yyin;
+extern int yylex_destroy();
 
 char file_name[100];
 
