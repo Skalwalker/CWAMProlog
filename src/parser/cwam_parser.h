@@ -1,9 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.2.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
-   Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,10 +30,6 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-   especially those whose name start with YY_ or yy_.  They are
-   private implementation details that can be changed or removed.  */
-
 #ifndef YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED
 # define YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED
 /* Debug traces.  */
@@ -45,27 +40,23 @@
 extern int yydebug;
 #endif
 
-/* Token kinds.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    CON = 258,                     /* CON  */
-    VAR = 259,                     /* VAR  */
-    RULE_SYM = 260                 /* RULE_SYM  */
+    CON = 258,
+    VAR = 259,
+    RULE_SYM = 260
   };
-  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 99 "src/parser/prolog_bison.y"
+#line 99 "src/parser/prolog_bison.y" /* yacc.c:1909  */
 
     char con[100];
     char var[100];
@@ -77,10 +68,8 @@ union YYSTYPE
     struct node_args *args;
     struct node_list *list;
 
-#line 81 "src/parser/cwam_parser.h"
-
+#line 72 "src/parser/cwam_parser.h" /* yacc.c:1909  */
 };
-typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

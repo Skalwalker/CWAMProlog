@@ -18,7 +18,9 @@ int main(int argc, char **argv){
 		return 0;
     }
 
-	yyparse();
+    yyparse();
+    yylex_destroy();
+    fclose(fp);
     st_print();
     st_delete();
 	return 0;
