@@ -97,7 +97,7 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 %%
 
 void yyerror (char const *s) {
-    printf("ERROR: %s:%d:%d:", file_name, yylineno, error_col);
+    printf("ERROR: %s:%d:%d:\n", file_name, yylineno, error_col);
 	printf("%s\n", s);
 }
 
