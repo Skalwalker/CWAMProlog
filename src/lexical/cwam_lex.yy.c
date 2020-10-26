@@ -875,7 +875,12 @@ YY_RULE_SETUP
 #line 69 "src/lexical/prolog_lex.l"
 {
                         check_error();
-                        for (yy_size_t i=0; i < yyleng; i++){
+                        #ifdef __APPLE__
+                                unsigned int i;
+                        #else
+                                int i;
+                        #endif
+                        for (i=0; i < yyleng; i++){
                                 if (strncmp(&yytext[i], "\n", 1  ) == 0) {
                                         c_line += 1;
                                 }
@@ -885,12 +890,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 80 "src/lexical/prolog_lex.l"
+#line 85 "src/lexical/prolog_lex.l"
 {check_error(); c_col += yyleng;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 82 "src/lexical/prolog_lex.l"
+#line 87 "src/lexical/prolog_lex.l"
 {
         c_col += 1;
         if (error_count == 0){
@@ -903,10 +908,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 92 "src/lexical/prolog_lex.l"
+#line 97 "src/lexical/prolog_lex.l"
 ECHO;
 	YY_BREAK
-#line 910 "src/lexical/cwam_lex.yy.c"
+#line 915 "src/lexical/cwam_lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1874,7 +1879,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "src/lexical/prolog_lex.l"
+#line 97 "src/lexical/prolog_lex.l"
 
 
 

@@ -68,7 +68,12 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 "/*"[^/]*"*/"  {
                         check_error();
-                        for (yy_size_t i=0; i < yyleng; i++){
+                        #ifdef __APPLE__
+                                unsigned int i;
+                        #else
+                                int i;
+                        #endif
+                        for (i=0; i < yyleng; i++){
                                 if (strncmp(&yytext[i], "\n", 1  ) == 0) {
                                         c_line += 1;
                                 }
