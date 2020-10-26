@@ -875,7 +875,7 @@ YY_RULE_SETUP
 #line 69 "src/lexical/prolog_lex.l"
 {
                         check_error();
-                        for (unsigned long i=0; i < yyleng; i++){
+                        for (yy_size_t i=0; i < yyleng; i++){
                                 if (strncmp(&yytext[i], "\n", 1  ) == 0) {
                                         c_line += 1;
                                 }
