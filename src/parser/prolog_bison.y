@@ -70,13 +70,13 @@
     NodeTerm* new_node_term(NodeStr* one, NodeList* two, char nome[]);
     NodeList* new_node_list(NodeTerm* one, NodeTerm* two);
 
-    void print_str(NodeStr *root);
-    void print_strs(NodeStrs *root);
-    void print_args(NodeArgs *root);
-    void print_term(NodeTerm *root);
-    void print_fact(NodeFact *root);
-    void print_rule(NodeRule *root);
-    void print_list(NodeList *root);
+    void print_str(NodeStr *root, int tabs);
+    void print_strs(NodeStrs *root, int tabs);
+    void print_args(NodeArgs *root, int tabs);
+    void print_term(NodeTerm *root, int tabs);
+    void print_fact(NodeFact *root, int tabs);
+    void print_rule(NodeRule *root, int tabs);
+    void print_list(NodeList *root, int tabs);
 
     void free_fact(NodeFact *root);
     void free_rule(NodeRule *root);
@@ -143,8 +143,8 @@ predicado:
 ;
 
 clausula:
-    fato {print_header("Fato"); print_fact($1); print_footer();free_fact($1);}
-    | regra {print_header("Regra"); print_rule($1); print_footer();free_rule($1);}
+    fato {print_header("Fato"); print_fact($1, 0); print_footer();free_fact($1);}
+    | regra {print_header("Regra"); print_rule($1, 0); print_footer();free_rule($1);}
     | error '.' {yyerrok; }
 ;
 
@@ -178,9 +178,9 @@ termo:
 ;
 
 list:
-    '[' ']' {$$ = new_node_list(NULL, NULL); st_add_symbol(LIS_SYMBOL, "[]");}
-    | '[' termo ']' {$$ = new_node_list($2, NULL);  st_add_symbol(LIS_SYMBOL, "[TERMS]");}
-    | '[' termo '|' termo ']' {$$ = new_node_list($2, $4);st_add_symbol(LIS_SYMBOL, "[TERMS|TERMS]");}
+    '[' ']' {$$ = new_node_list(NULL, NULL);}
+    | '[' termo ']' {$$ = new_node_list($2, NULL);}
+    | '[' termo '|' termo ']' {$$ = new_node_list($2, $4);}
 ;
 
 %%
@@ -240,90 +240,128 @@ NodeList* new_node_list(NodeTerm* one, NodeTerm* two) {
 	return e;
 }
 
+void print_tab(int tabs){
+    tabs = tabs*2;
+    char *t = malloc(sizeof(char) * tabs+1);
+    memset(t, ' ', tabs);
+    t[tabs] = '\0';
+    printf("%s", t);
+    free(t);
+}
 
-void print_str(NodeStr *root) {
+void print_str(NodeStr *root, int tabs) {
     if (root == NULL) {
         return;
     }
 
-    printf("%s\n", root->nome);
+    print_tab(tabs);
+
+    printf("<estrutura> %s\n", root->nome);
     if (root->op != '\0') {
-        printf("(\n");
+        print_tab(tabs+1);
+        printf("<(>\n");
     }
 
-    print_args(root->one);
+    print_args(root->one, tabs+1);
 
     if (root->op != '\0'){
-        printf(")\n");
+        print_tab(tabs+1);
+        printf("<)>\n");
     }
 }
 
-void print_strs(NodeStrs *root) {
+void print_strs(NodeStrs *root, int tabs) {
     if (root == NULL) {
         return;
     }
 
-    print_str(root->one);
-    if (root->op != '\0') printf("%c\n", root->op);
-    print_strs(root->two);
+    print_tab(tabs);
+    printf("<estruturas>\n");
+
+    print_str(root->one, tabs+1);
+    if (root->op != '\0'){
+        print_tab(tabs);
+        printf("<%c>\n", root->op);
+    }
+    print_strs(root->two, tabs+1);
 }
 
-void print_args(NodeArgs *root) {
+void print_args(NodeArgs *root, int tabs) {
     if (root == NULL) {
         return;
     }
 
-    print_term(root->one);
-    if (root->op != '\0') printf("%c\n", root->op);
-    print_args(root->two);
+    print_tab(tabs);
+    printf("<argumentos>\n");
+
+    print_term(root->one, tabs+1);
+    if (root->op != '\0'){
+        print_tab(tabs);
+        printf("<%c>\n", root->op);
+    }
+    print_args(root->two, tabs+1);
 }
 
-void print_term(NodeTerm *root) {
+void print_term(NodeTerm *root, int tabs) {
     if (root == NULL) {
         return;
     }
+
+    print_tab(tabs);
 
     if (root->nome[0] != '\0') {
-        printf("%s\n", root->nome);
+        printf("<termo> %s\n", root->nome);
     } else if(root->one != NULL) {
-        print_str(root->one);
+        printf("<termo>\n");
+        print_str(root->one, tabs+1);
     } else {
-        print_list(root->two);
+        printf("<termo>\n");
+        print_list(root->two, tabs+1);
     }
 }
 
-void print_list(NodeList *root) {
+void print_list(NodeList *root, int tabs) {
     if (root == NULL) {
         return;
     }
 
-    printf("[\n");
-    print_term(root->one);
-    if (root->two != NULL) printf("|\n");
-    print_term(root->two);
-    printf("]\n");
+    print_tab(tabs);
+    printf("<lista>");
+
+    printf("<[>\n");
+    print_term(root->one, tabs+1);
+    if (root->two != NULL) printf("<|>\n");
+    print_term(root->two, tabs+1);
+    printf("<]>\n");
 }
 
-void print_fact(NodeFact *root) {
+void print_fact(NodeFact *root, int tabs) {
 
     if (root == NULL) {
         return;
     }
 
-    print_str(root->one);
+    print_tab(tabs);
+    printf("<fato>\n");
 
-    printf("%c", root->op);
+    print_str(root->one, tabs+1);
+
+    printf("<%c>", root->op);
 }
 
-void print_rule(NodeRule *root) {
+void print_rule(NodeRule *root, int tabs) {
     if (root == NULL) {
         return;
     }
 
-    print_str(root->one);
-    printf(":-\n");
-    print_strs(root->two);
-    printf(".\n");
+    print_tab(tabs);
+    printf("<regra>\n");
+    print_str(root->one, tabs+1);
+    print_tab(tabs);
+    printf("<:->\n");
+    print_strs(root->two, tabs+1);
+    print_tab(tabs);
+    printf("<.>\n");
 }
 
 void print_header(char tipo[]){
