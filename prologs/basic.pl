@@ -20,3 +20,4 @@ ensina(teo, csc134).
 /* X é um professor de Y se X
 ensina C e Y estua C */
 professor(X, Aluno) :- ensina(X, Aula_1), estuda(Aluno, Aula_1).
+%professor(X, Aluno) :- ensina(X, Aula_1), estuda(Aluno, Aula_1).

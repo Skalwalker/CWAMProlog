@@ -18,9 +18,8 @@ void st_add_symbol(int symbol, char *name) {
 
 void st_print() {
     SymbolTable *s;
-    printf("\n======================Symbol Table======================\n");
+    printf("\n===================Tabela de Simbolos===================\n");
     for(s=s_table; s != NULL; s=s->hh.next) {
-        // printf("\n= Entry:\n= Lexeme: %s\n", s->lexeme);
         char token[4];
         switch (s->type) {
             case 1:
@@ -43,7 +42,7 @@ void st_print() {
                 break;
         }
 
-        printf("Key: %20s | Lexeme: %20s\n", s->lexeme, token);
+        printf("(Chave: %s, Lexema: %s)\n", s->lexeme, token);
     }
     printf("========================================================\n");
 }
@@ -52,8 +51,8 @@ void st_delete() {
   SymbolTable *current_table, *tmp;
 
   HASH_ITER(hh, s_table, current_table, tmp) {
-    HASH_DEL(s_table,current_table);  /* delete; users advances to next */
-    free(current_table);            /* optional- if you want to free  */
+    HASH_DEL(s_table,current_table);
+    free(current_table);
   }
 }
 

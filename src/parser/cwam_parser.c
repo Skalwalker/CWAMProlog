@@ -1988,12 +1988,11 @@ NodeList* new_node_list(NodeTerm* one, NodeTerm* two) {
 }
 
 void print_tab(int tabs){
+    int i;
     tabs = tabs*2;
-    char *t = malloc(sizeof(char) * tabs+1);
-    memset(t, ' ', tabs);
-    t[tabs] = '\0';
-    printf("%s", t);
-    free(t);
+    for (i= 0 ; i <tabs; i++){
+        printf(" ");
+    }
 }
 
 void print_str(NodeStr *root, int tabs) {

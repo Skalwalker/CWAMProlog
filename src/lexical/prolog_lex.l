@@ -18,7 +18,6 @@ int error_line = 0;
 int error_col = 0;
 char file_name[100];
 char error[200];
-char progr_errors[100][200];
 
 void yyerror (char const *);
 
@@ -81,6 +80,7 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
                         c_col = 0;
                 }
 
+"%"[^/\n]* { check_error(); c_col=0;}
 
 [ \t]+ {check_error(); c_col += yyleng;}
 
