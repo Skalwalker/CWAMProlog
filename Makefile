@@ -1,5 +1,14 @@
 ROOT=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	LINKER = -lfl
+endif
+ifeq ($(UNAME_S),Darwin)
+	LINKER = -ll
+endif
+
 IDIR=src/wam/include
 CC=gcc
 CFLAGS= -std=gnu11 -Wall -Wextra -pedantic -g
@@ -7,7 +16,7 @@ CFLAGS= -std=gnu11 -Wall -Wextra -pedantic -g
 ODIR=obj
 LDIR=src/wam/lib
 
-LIBS=-lm -I $(IDIR)
+LIBS=-lm -I $(IDIR) $(LINKER)
 
 _DEPS = instruction_set.h memory.h uthash.h shared.h symbol_table.h main.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
