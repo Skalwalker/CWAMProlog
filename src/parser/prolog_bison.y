@@ -160,9 +160,9 @@
 
 %start programa
 
-%destructor { free_list($$); } <list>
-%destructor { free_fact($$); } <fato>
-%destructor { free_rule($$); } <regra>
+%destructor { free_list($$);} <list>
+%destructor { free_fact($$); hash_variable_delete();} <fato>
+%destructor { free_rule($$); hash_variable_delete();} <regra>
 %destructor { free_str($$); } <str>
 %destructor { free_strs($$); } <strs>
 %destructor { free_term($$); } <term>
@@ -172,7 +172,7 @@
 %%
 
 programa:
-    predicado {hash_structure_delete();}
+    predicado {hash_structure_delete();  hash_variable_delete();}
 ;
 
 predicado:

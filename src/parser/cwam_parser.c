@@ -1295,13 +1295,13 @@ yydestruct (const char *yymsg,
     {
     case YYSYMBOL_fato: /* fato  */
 #line 164 "src/parser/prolog_bison.y"
-            { free_fact(((*yyvaluep).fato)); }
+            { free_fact(((*yyvaluep).fato)); hash_variable_delete();}
 #line 1300 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_regra: /* regra  */
 #line 165 "src/parser/prolog_bison.y"
-            { free_rule(((*yyvaluep).regra)); }
+            { free_rule(((*yyvaluep).regra)); hash_variable_delete();}
 #line 1306 "src/parser/cwam_parser.c"
         break;
 
@@ -1331,7 +1331,7 @@ yydestruct (const char *yymsg,
 
     case YYSYMBOL_list: /* list  */
 #line 163 "src/parser/prolog_bison.y"
-            { free_list(((*yyvaluep).list)); }
+            { free_list(((*yyvaluep).list));}
 #line 1336 "src/parser/cwam_parser.c"
         break;
 
@@ -1635,7 +1635,7 @@ yyreduce:
     {
   case 2: /* programa: predicado  */
 #line 175 "src/parser/prolog_bison.y"
-              {hash_structure_delete();}
+              {hash_structure_delete();  hash_variable_delete();}
 #line 1640 "src/parser/cwam_parser.c"
     break;
 
