@@ -21,27 +21,7 @@ void st_print() {
     printf("\n===================Tabela de Simbolos===================\n");
     for(s=s_table; s != NULL; s=s->hh.next) {
         char token[4];
-        switch (s->type) {
-            case 1:
-                strcpy(token, "REF\0");
-                break;
-
-            case 2:
-                strcpy(token, "STR\0");
-                break;
-
-            case 3:
-                strcpy(token, "CON\0");
-                break;
-
-            case 4:
-                strcpy(token, "LIS\0");
-                break;
-
-            default:
-                break;
-        }
-
+        datatype_token_to_str(token, s->type);
         printf("(Chave: %s, Lexema: %s)\n", s->lexeme, token);
     }
     printf("========================================================\n");

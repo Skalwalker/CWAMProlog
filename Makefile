@@ -23,7 +23,7 @@ _DEPS = instruction_set.h memory.h uthash.h shared.h symbol_table.h main.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 
-_OBJ = instruction_set.o memory.o symbol_table.o main.o
+_OBJ = instruction_set.o memory.o shared.o symbol_table.o main.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(LDIR)/%.c src/parser/cwam_parser.h $(DEPS)

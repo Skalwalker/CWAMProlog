@@ -35,7 +35,10 @@ DIGIT    [0-9]
 INT "-"?{DIGIT}+
 FLOAT "-"?{DIGIT}+"."{DIGIT}*
 CONSTANTE [a-z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
-VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
+VAR [A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
+SINGLE_VAR "_"+[A-Za-z0-9]*(_[A-Za-z0-9]+)*
+ANON_VAR "_"
+
 
 %%
 
@@ -47,7 +50,12 @@ VARIAVEL [_A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 
 {CONSTANTE}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 
-{VARIAVEL} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext); return VAR;}
+{VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext); return VAR;}
+
+{ANON_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return ANON_VAR;}
+
+{SINGLE_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext); return SINGLE_VAR;}
+
 
 "(" {check_error(); c_col += 1; return '(';}
 

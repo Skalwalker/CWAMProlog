@@ -14,6 +14,13 @@ enum DATATYPES {
     LIS_SYMBOL = 4,
 };
 
+enum VARTYPES {
+    BASIC_VAR = 5,
+    SINGLETON_VAR = 6,
+    ANONYM_VAR = 7,
+};
+
+
 enum CODES {
     HEAP_CREATE_SUCCESS = 110,
     HEAP_ADD_SUCCESS = 111,
@@ -26,6 +33,9 @@ enum CODES {
     HEAP_DESTRUCTION_ERROR = 104,
     HEAP_EMPTY = 105
 };
+
+void datatype_token_to_str(char res[], int type);
+void vartype_token_to_str(char res[], int type);
 
 
 
