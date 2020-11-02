@@ -4,7 +4,6 @@
 typedef struct symbol_table {
     char lexeme[100];
     char key[100];
-    int occurences;
     int var_type;
     int arity;
     int pos;

@@ -19,7 +19,6 @@ void st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
         strcat(key, lineno);
         strcpy(s->key, key);
         s->type = symbol;
-        s->occurences = 1;
         strcpy(s->lexeme, name);
         s->var_type = var_type;
         s->arity = arity;
