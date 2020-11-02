@@ -216,14 +216,14 @@ estruturas:
 ;
 
 estrutura:
-    CON {$$ = new_node_str(NULL, $1, '\0', arity);  st_add_symbol(CON_SYMBOL, $1);}
+    CON {$$ = new_node_str(NULL, $1, '\0', arity);  st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);}
     | CON '(' argumentos ')' {
                                     $$ = new_node_str($3, $1, ')', arity);
                                     strcat($1, "/");
                                     char temp[100];
                                     sprintf(temp,"%d",arity);
                                     strcat($1, temp);
-                                    st_add_symbol(STR_SYMBOL, $1);
+                                    st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
                                     arity = 0;
                             }
 ;

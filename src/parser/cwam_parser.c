@@ -1699,7 +1699,7 @@ yyreduce:
 
   case 12: /* estrutura: CON  */
 #line 219 "src/parser/prolog_bison.y"
-        {(yyval.str) = new_node_str(NULL, (yyvsp[0].con), '\0', arity);  st_add_symbol(CON_SYMBOL, (yyvsp[0].con));}
+        {(yyval.str) = new_node_str(NULL, (yyvsp[0].con), '\0', arity);  st_add_symbol(CON_SYMBOL, (yyvsp[0].con), 0, yylineno, 0);}
 #line 1704 "src/parser/cwam_parser.c"
     break;
 
@@ -1711,7 +1711,7 @@ yyreduce:
                                     char temp[100];
                                     sprintf(temp,"%d",arity);
                                     strcat((yyvsp[-3].con), temp);
-                                    st_add_symbol(STR_SYMBOL, (yyvsp[-3].con));
+                                    st_add_symbol(STR_SYMBOL, (yyvsp[-3].con), arity, yylineno, 0);
                                     arity = 0;
                             }
 #line 1718 "src/parser/cwam_parser.c"
