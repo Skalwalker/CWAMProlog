@@ -6,17 +6,18 @@ void st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
 
     SymbolTable *s;
 
-    HASH_FIND_STR(s_table, name, s);
+    char key[100];
+    key[0] = '\0';
+    char lineno[100];
+    strcat(key, name);
+    strcat(key, "::");
+    sprintf(lineno, "%d", arity);
+    strcat(key, lineno);
+
+    HASH_FIND_STR(s_table, key, s);
 
     if(s==NULL){
         s = (SymbolTable*)malloc(sizeof(SymbolTable));
-        char key[100];
-        key[0] = '\0';
-        char lineno[100];
-        strcat(key, name);
-        strcat(key, "::");
-        sprintf(lineno, "%d", arity);
-        strcat(key, lineno);
         strcpy(s->key, key);
         s->type = symbol;
         strcpy(s->lexeme, name);

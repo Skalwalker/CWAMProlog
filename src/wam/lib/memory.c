@@ -12,14 +12,14 @@ Heap* create_heap(){
     return newHeap;
 }
 
-Node* create_node(int x){
+Node* create_node(DataType x){
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->data = x;
     newNode->next = NULL;
     newNode->prev = NULL;
 
     if (DEBUG == 1) {
-        printf("Created Node with Element %d\n", x);
+        printf("Created Node with Element %d\n", x.data);
     }
 
     return newNode;
@@ -83,37 +83,13 @@ int print_heap(Heap* heap){
 
     if (current == NULL) {
         printf("Empty Heap\n");
-        if (heap->head != NULL){
-            printf("\tHead = %d\n", heap->head->data);
-        } else {
-            printf("\tHEAD = NULL\n");
-        }
-
-        if (heap->tail != NULL){
-            printf("\tTail = %d\n", heap->tail->data);
-        } else {
-            printf("\tTail = NULL\n");
-        }
         return HEAP_EMPTY;
     }
 
     while (current != NULL){
-        printf("Element = %d\n", current->data);
-        if (current->next != NULL){
-            printf("\tNext = %d\n", current->next->data);
-        } else {
-            printf("\tNext = NULL\n");
-        }
-
-        if (current->prev != NULL)
-        {
-            printf("\tPrev = %d\n", current->prev->data);
-        } else {
-            printf("\tPrev = NULL\n");
-        }
-
-
-
+        printf("Element = %d\n", current->data.data);
+        printf("\tNext = %d\n", current->next->data.data);
+        printf("\tPrev = %d\n", current->prev->data.data);
         current = current->next;
     }
 
@@ -129,13 +105,11 @@ int print_heap_reversed(Heap* heap) {
     }
 
     while (current != NULL){
-        printf("Element = %d\n", current->data);
-        printf("\tNext = %d\n", current->next->data);
-        printf("\tPrev = %d\n", current->prev->data);
+        printf("Element = %d\n", current->data.data);
+        printf("\tNext = %d\n", current->next->data.data);
+        printf("\tPrev = %d\n", current->prev->data.data);
         current = current->prev;
     }
-
-    // printf("NULL\n");
 
     return HEAP_PRINT_SUCCESS;
 }

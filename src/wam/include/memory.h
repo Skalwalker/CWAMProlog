@@ -5,15 +5,19 @@ typedef struct heap {
     struct node *tail;
 } Heap;
 
-typedef struct node {
+typedef struct data_type {
     int data;
+} DataType;
+
+typedef struct node {
+    struct data_type data;
     struct node *next;
     struct node *prev;
 } Node;
 
 
 Heap* create_heap();
-Node* create_node(int x);
+Node* create_node(DataType x);
 int heap_insert_tail(Heap *heap, Node *node);
 int heap_insert_head(Heap *heap, Node *node);
 int print_heap(Heap* heap);

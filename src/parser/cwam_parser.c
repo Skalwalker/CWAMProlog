@@ -2082,7 +2082,6 @@ void check_cont(char new_str[], int arity){
         hash_add_structure(new_str);
         strcpy(last, new_str);
     } else {
-        // error_last
         if (strcmp(new_str, last) != 0||error_last == 1){
             printf("WARNING: %s:%d:%d: Semantic error, clauses of %s are not together in the source-file",  file_name, yylineno, error_col, new_str);
             strcpy(last, new_str);
