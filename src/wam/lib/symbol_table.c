@@ -11,7 +11,7 @@ void st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
     char lineno[100];
     strcat(key, name);
     strcat(key, "::");
-    sprintf(lineno, "%d", arity);
+    sprintf(lineno, "%d", pos);
     strcat(key, lineno);
 
     HASH_FIND_STR(s_table, key, s);
