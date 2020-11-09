@@ -2,6 +2,7 @@
 
 extern SymbolTable *s_table;
 
+
 void st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
 
     SymbolTable *s;

@@ -32,6 +32,7 @@ $(ODIR)/%.o: $(LDIR)/%.c src/parser/cwam_parser.h $(DEPS)
 all: bison_flex bin/main
 
 bison_flex:
+	$(CC) -c -o obj/arvore.o src/parser/arvore.c $(CFLAGS)
 	bison src/parser/prolog_bison.y --output=src/parser/cwam_parser.c
 	flex -o src/lexical/cwam_lex.yy.c src/lexical/prolog_lex.l
 
@@ -40,7 +41,7 @@ bin/main: $(OBJ)
 	$(CC) -c -o obj/cwam_lex.yy.o src/lexical/cwam_lex.yy.c $(CFLAGS)
 	$(CC) -c -o obj/cwam_parser.o src/parser/cwam_parser.c $(CFLAGS)
 	# $(CC) -o bin/parser obj/cwam_lex.yy.o obj/cwam_parser.o $(CFLAGS)
-	$(CC) -o $@ $^ obj/cwam_parser.o obj/cwam_lex.yy.o $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ obj/arvore.o obj/cwam_parser.o obj/cwam_lex.yy.o $(CFLAGS) $(LIBS)
 
 
 .PHONY: clean bison_flex bin/main

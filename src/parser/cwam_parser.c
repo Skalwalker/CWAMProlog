@@ -67,30 +67,22 @@
 
 
 /* First part of user prologue.  */
-#line 7 "src/parser/prolog_bison.y"
+#line 5 "src/parser/prolog_bison.y"
 
-	#include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
+    #include "arvore.h"
     #include "../wam/include/main.h"
 
     extern char file_name[];
     extern int yylineno;
     extern int error_col;
 
+    int register_input = 1;
     int arity = 0;
     int error_last = 0;
     char last[100];
+
     void check_var();
     void check_cont(char new_str[], int arity);
-
-    typedef struct node_rule NodeRule;
-    typedef struct node_str NodeStr;
-    typedef struct node_strs NodeStrs;
-    typedef struct node_args NodeArgs;
-    typedef struct node_term NodeTerm;
-    typedef struct node_fact NodeFact;
-    typedef struct node_list NodeList;
 
 
     typedef struct already_added {
@@ -113,85 +105,11 @@
     void hash_add_variable(char *name, int var_type, int occurrances);
     void hash_variable_delete();
 
-    struct node_fact {
-        char op;
-        NodeStr *one;
-        int pos;
-    };
-
-    struct node_rule {
-        char op;
-        NodeStr *one;
-        NodeStrs *two;
-        int pos;
-    };
-
-    struct node_str {
-        char op;
-        NodeArgs *one;
-        char nome[100];
-        int arity;
-    };
-
-    struct node_strs {
-        char op;
-        NodeStr *one;
-        NodeStrs *two;
-    };
-
-    struct node_args {
-        char op;
-        NodeTerm *one;
-        NodeArgs *two;
-
-    };
-
-    struct node_term {
-        NodeStr *one;
-        NodeList *two;
-        char nome[100];
-        int type;
-        int var_type;
-    };
-
-    struct node_list {
-        NodeTerm *one;
-        NodeTerm *two;
-    };
-
-
-    NodeFact* new_node_fact(NodeStr* one, char op, int pos);
-    NodeRule* new_node_rule(NodeStr* one, NodeStrs* two, char op, int pos);
-    NodeStr* new_node_str(NodeArgs* one, char nome[], char op, int arity);
-    NodeStrs* new_node_strs(NodeStr* one, NodeStrs* two, char op);
-    NodeArgs* new_node_args(NodeTerm* one, NodeArgs* two, char op);
-    NodeTerm* new_node_term(NodeStr* one, NodeList* two, char nome[], int type, int var_type);
-    NodeList* new_node_list(NodeTerm* one, NodeTerm* two);
-
-    void print_str(NodeStr *root, int tabs);
-    void print_strs(NodeStrs *root, int tabs);
-    void print_args(NodeArgs *root, int tabs);
-    void print_term(NodeTerm *root, int tabs);
-    void print_fact(NodeFact *root, int tabs);
-    void print_rule(NodeRule *root, int tabs);
-    void print_list(NodeList *root, int tabs);
-
-    void free_fact(NodeFact *root);
-    void free_rule(NodeRule *root);
-    void free_str(NodeStr *root);
-    void free_strs(NodeStrs *root);
-    void free_args(NodeArgs *root);
-    void free_term(NodeTerm *root);
-    void free_list(NodeList *root);
-
-    void print_header(char tipo[]);
-    void print_footer();
-
     int yyparse(void);
 	void yyerror (char const *s);
     int yylex();
 
-#line 195 "src/parser/cwam_parser.c"
+#line 113 "src/parser/cwam_parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -616,9 +534,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   175,   175,   179,   180,   184,   193,   202,   206,   210,
-     214,   215,   219,   220,   232,   233,   237,   238,   239,   240,
-     241,   245,   246,   247
+       0,    91,    91,    95,    96,   100,   110,   120,   124,   128,
+     132,   133,   137,   138,   150,   151,   155,   156,   161,   166,
+     167,   171,   172,   173
 };
 #endif
 
@@ -1294,45 +1212,45 @@ yydestruct (const char *yymsg,
   switch (yykind)
     {
     case YYSYMBOL_fato: /* fato  */
-#line 164 "src/parser/prolog_bison.y"
+#line 80 "src/parser/prolog_bison.y"
             { free_fact(((*yyvaluep).fato)); hash_variable_delete();}
-#line 1300 "src/parser/cwam_parser.c"
+#line 1218 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_regra: /* regra  */
-#line 165 "src/parser/prolog_bison.y"
+#line 81 "src/parser/prolog_bison.y"
             { free_rule(((*yyvaluep).regra)); hash_variable_delete();}
-#line 1306 "src/parser/cwam_parser.c"
+#line 1224 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estruturas: /* estruturas  */
-#line 167 "src/parser/prolog_bison.y"
+#line 83 "src/parser/prolog_bison.y"
             { free_strs(((*yyvaluep).strs)); }
-#line 1312 "src/parser/cwam_parser.c"
+#line 1230 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estrutura: /* estrutura  */
-#line 166 "src/parser/prolog_bison.y"
+#line 82 "src/parser/prolog_bison.y"
             { free_str(((*yyvaluep).str)); }
-#line 1318 "src/parser/cwam_parser.c"
+#line 1236 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_argumentos: /* argumentos  */
-#line 169 "src/parser/prolog_bison.y"
+#line 85 "src/parser/prolog_bison.y"
             { free_args(((*yyvaluep).args)); }
-#line 1324 "src/parser/cwam_parser.c"
+#line 1242 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_termo: /* termo  */
-#line 168 "src/parser/prolog_bison.y"
+#line 84 "src/parser/prolog_bison.y"
             { free_term(((*yyvaluep).term)); }
-#line 1330 "src/parser/cwam_parser.c"
+#line 1248 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_list: /* list  */
-#line 163 "src/parser/prolog_bison.y"
+#line 79 "src/parser/prolog_bison.y"
             { free_list(((*yyvaluep).list));}
-#line 1336 "src/parser/cwam_parser.c"
+#line 1254 "src/parser/cwam_parser.c"
         break;
 
       default:
@@ -1634,13 +1552,13 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: predicado  */
-#line 175 "src/parser/prolog_bison.y"
+#line 91 "src/parser/prolog_bison.y"
               {hash_structure_delete();  hash_variable_delete();}
-#line 1640 "src/parser/cwam_parser.c"
+#line 1558 "src/parser/cwam_parser.c"
     break;
 
   case 5: /* clausula: fato  */
-#line 184 "src/parser/prolog_bison.y"
+#line 100 "src/parser/prolog_bison.y"
          {
             print_header("Fato");
             print_fact((yyvsp[0].fato), 0);
@@ -1648,13 +1566,14 @@ yyreduce:
             check_cont((yyvsp[0].fato)->one->nome, (yyvsp[0].fato)->one->arity);
             check_var();
             hash_variable_delete();
+            // flatten_fact();
             free_fact((yyvsp[0].fato));
         }
-#line 1654 "src/parser/cwam_parser.c"
+#line 1573 "src/parser/cwam_parser.c"
     break;
 
   case 6: /* clausula: regra  */
-#line 193 "src/parser/prolog_bison.y"
+#line 110 "src/parser/prolog_bison.y"
             {
               print_header("Regra");
               print_rule((yyvsp[0].regra), 0);
@@ -1662,49 +1581,50 @@ yyreduce:
               check_cont((yyvsp[0].regra)->one->nome, (yyvsp[0].regra)->one->arity);
               check_var();
               hash_variable_delete();
+            //   flatten_rule();
               free_rule((yyvsp[0].regra));
             }
-#line 1668 "src/parser/cwam_parser.c"
+#line 1588 "src/parser/cwam_parser.c"
     break;
 
   case 7: /* clausula: error '.'  */
-#line 202 "src/parser/prolog_bison.y"
+#line 120 "src/parser/prolog_bison.y"
                 { yyerrok; }
-#line 1674 "src/parser/cwam_parser.c"
+#line 1594 "src/parser/cwam_parser.c"
     break;
 
   case 8: /* fato: estrutura '.'  */
-#line 206 "src/parser/prolog_bison.y"
+#line 124 "src/parser/prolog_bison.y"
                   {(yyval.fato) = new_node_fact((yyvsp[-1].str), '.', yylineno);}
-#line 1680 "src/parser/cwam_parser.c"
+#line 1600 "src/parser/cwam_parser.c"
     break;
 
   case 9: /* regra: estrutura RULE_SYM estruturas '.'  */
-#line 210 "src/parser/prolog_bison.y"
+#line 128 "src/parser/prolog_bison.y"
                                       {(yyval.regra) = new_node_rule((yyvsp[-3].str), (yyvsp[-1].strs), '.', yylineno);}
-#line 1686 "src/parser/cwam_parser.c"
+#line 1606 "src/parser/cwam_parser.c"
     break;
 
   case 10: /* estruturas: estrutura  */
-#line 214 "src/parser/prolog_bison.y"
+#line 132 "src/parser/prolog_bison.y"
               {(yyval.strs) = new_node_strs((yyvsp[0].str), NULL, '\0');}
-#line 1692 "src/parser/cwam_parser.c"
+#line 1612 "src/parser/cwam_parser.c"
     break;
 
   case 11: /* estruturas: estrutura ',' estruturas  */
-#line 215 "src/parser/prolog_bison.y"
+#line 133 "src/parser/prolog_bison.y"
                                {(yyval.strs) = new_node_strs((yyvsp[-2].str), (yyvsp[0].strs), ',');}
-#line 1698 "src/parser/cwam_parser.c"
+#line 1618 "src/parser/cwam_parser.c"
     break;
 
   case 12: /* estrutura: CON  */
-#line 219 "src/parser/prolog_bison.y"
-        {(yyval.str) = new_node_str(NULL, (yyvsp[0].con), '\0', arity);  st_add_symbol(CON_SYMBOL, (yyvsp[0].con), 0, yylineno, 0);}
-#line 1704 "src/parser/cwam_parser.c"
+#line 137 "src/parser/prolog_bison.y"
+        {(yyval.str) = new_node_str(NULL, (yyvsp[0].con), '\0', arity);st_add_symbol(CON_SYMBOL, (yyvsp[0].con), 0, yylineno, 0);}
+#line 1624 "src/parser/cwam_parser.c"
     break;
 
   case 13: /* estrutura: CON '(' argumentos ')'  */
-#line 220 "src/parser/prolog_bison.y"
+#line 138 "src/parser/prolog_bison.y"
                              {
                                     (yyval.str) = new_node_str((yyvsp[-1].args), (yyvsp[-3].con), ')', arity);
                                     strcat((yyvsp[-3].con), "/");
@@ -1714,71 +1634,79 @@ yyreduce:
                                     st_add_symbol(STR_SYMBOL, (yyvsp[-3].con), arity, yylineno, 0);
                                     arity = 0;
                             }
-#line 1718 "src/parser/cwam_parser.c"
+#line 1638 "src/parser/cwam_parser.c"
     break;
 
   case 14: /* argumentos: termo  */
-#line 232 "src/parser/prolog_bison.y"
+#line 150 "src/parser/prolog_bison.y"
           {arity += 1; (yyval.args) = new_node_args((yyvsp[0].term), NULL, '\0');}
-#line 1724 "src/parser/cwam_parser.c"
+#line 1644 "src/parser/cwam_parser.c"
     break;
 
   case 15: /* argumentos: termo ',' argumentos  */
-#line 233 "src/parser/prolog_bison.y"
+#line 151 "src/parser/prolog_bison.y"
                            {arity += 1; (yyval.args) = new_node_args((yyvsp[-2].term), (yyvsp[0].args), ',');}
-#line 1730 "src/parser/cwam_parser.c"
+#line 1650 "src/parser/cwam_parser.c"
     break;
 
   case 16: /* termo: estrutura  */
-#line 237 "src/parser/prolog_bison.y"
+#line 155 "src/parser/prolog_bison.y"
               {(yyval.term) = new_node_term((yyvsp[0].str), NULL, "\0", STR_SYMBOL, 0);}
-#line 1736 "src/parser/cwam_parser.c"
+#line 1656 "src/parser/cwam_parser.c"
     break;
 
   case 17: /* termo: VAR  */
-#line 238 "src/parser/prolog_bison.y"
-          {hash_add_variable((yyvsp[0].var), BASIC_VAR, 1); (yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].var), REF_SYMBOL, BASIC_VAR);}
-#line 1742 "src/parser/cwam_parser.c"
+#line 156 "src/parser/prolog_bison.y"
+          {
+            hash_add_variable((yyvsp[0].var), BASIC_VAR, 1);
+            (yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].var), REF_SYMBOL, BASIC_VAR);
+            st_add_symbol(REF_SYMBOL, (yyvsp[0].var), 0, yylineno, BASIC_VAR);
+        }
+#line 1666 "src/parser/cwam_parser.c"
     break;
 
   case 18: /* termo: SINGLE_VAR  */
-#line 239 "src/parser/prolog_bison.y"
-                 {hash_add_variable((yyvsp[0].svar), SINGLETON_VAR, 1); (yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].svar), REF_SYMBOL, SINGLETON_VAR);}
-#line 1748 "src/parser/cwam_parser.c"
+#line 161 "src/parser/prolog_bison.y"
+                 {
+                  hash_add_variable((yyvsp[0].svar), SINGLETON_VAR, 1);
+                  (yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].svar), REF_SYMBOL, SINGLETON_VAR);
+                  st_add_symbol(REF_SYMBOL, (yyvsp[0].svar), 0, yylineno, SINGLETON_VAR);
+                }
+#line 1676 "src/parser/cwam_parser.c"
     break;
 
   case 19: /* termo: ANON_VAR  */
-#line 240 "src/parser/prolog_bison.y"
+#line 166 "src/parser/prolog_bison.y"
                 {(yyval.term) = new_node_term(NULL, NULL, (yyvsp[0].avar), REF_SYMBOL, ANONYM_VAR);}
-#line 1754 "src/parser/cwam_parser.c"
+#line 1682 "src/parser/cwam_parser.c"
     break;
 
   case 20: /* termo: list  */
-#line 241 "src/parser/prolog_bison.y"
+#line 167 "src/parser/prolog_bison.y"
            {(yyval.term) = new_node_term(NULL, (yyvsp[0].list), "\0", LIS_SYMBOL, 0);}
-#line 1760 "src/parser/cwam_parser.c"
+#line 1688 "src/parser/cwam_parser.c"
     break;
 
   case 21: /* list: '[' ']'  */
-#line 245 "src/parser/prolog_bison.y"
+#line 171 "src/parser/prolog_bison.y"
             {(yyval.list) = new_node_list(NULL, NULL);}
-#line 1766 "src/parser/cwam_parser.c"
+#line 1694 "src/parser/cwam_parser.c"
     break;
 
   case 22: /* list: '[' termo ']'  */
-#line 246 "src/parser/prolog_bison.y"
+#line 172 "src/parser/prolog_bison.y"
                     {(yyval.list) = new_node_list((yyvsp[-1].term), NULL);}
-#line 1772 "src/parser/cwam_parser.c"
+#line 1700 "src/parser/cwam_parser.c"
     break;
 
   case 23: /* list: '[' termo '|' termo ']'  */
-#line 247 "src/parser/prolog_bison.y"
+#line 173 "src/parser/prolog_bison.y"
                               {(yyval.list) = new_node_list((yyvsp[-3].term), (yyvsp[-1].term));}
-#line 1778 "src/parser/cwam_parser.c"
+#line 1706 "src/parser/cwam_parser.c"
     break;
 
 
-#line 1782 "src/parser/cwam_parser.c"
+#line 1710 "src/parser/cwam_parser.c"
 
       default: break;
     }
@@ -2008,7 +1936,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 250 "src/parser/prolog_bison.y"
+#line 176 "src/parser/prolog_bison.y"
 
 
 void hash_add_variable(char *name, int var_type, int occurrances) {
@@ -2093,249 +2021,3 @@ void check_cont(char new_str[], int arity){
     }
 }
 
-
-NodeFact* new_node_fact(NodeStr* one, char op, int pos) {
-	NodeFact *e = (NodeFact*) malloc(sizeof(NodeFact));
-	e->one = one;
-    e->op = op;
-    e->pos = pos;
-	return e;
-}
-
-NodeRule* new_node_rule(NodeStr* one, NodeStrs* two, char op, int pos) {
-	NodeRule *e = (NodeRule*) malloc(sizeof(NodeRule));
-	e->one = one;
-	e->two = two;
-    e->op = op;
-    e->pos = pos;
-	return e;
-}
-
-NodeStr* new_node_str(NodeArgs* one, char nome[], char op, int arity) {
-	NodeStr *e = (NodeStr*) malloc(sizeof(NodeStr));
-    e->one = one;
-    e->op = op;
-    strcpy(e->nome, nome);
-    e->arity = arity;
-	return e;
-}
-
-NodeStrs* new_node_strs(NodeStr* one, NodeStrs* two, char op) {
-	NodeStrs *e = (NodeStrs*) malloc(sizeof(NodeStrs));
-	e->one = one;
-	e->two = two;
-    e->op = op;
-	return e;
-}
-
-NodeArgs* new_node_args(NodeTerm* one, NodeArgs* two, char op) {
-	NodeArgs *e = (NodeArgs*) malloc(sizeof(NodeArgs));
-	e->one = one;
-	e->two = two;
-    e->op = op;
-	return e;
-}
-
-NodeTerm* new_node_term(NodeStr* one, NodeList* two, char nome[], int type, int var_type) {
-	NodeTerm *e = (NodeTerm*) malloc(sizeof(NodeTerm));
-	e->one = one;
-    e->two = two;
-    strcpy(e->nome, nome);
-    e->type = type;
-    e->var_type = var_type;
-	return e;
-}
-
-NodeList* new_node_list(NodeTerm* one, NodeTerm* two) {
-	NodeList *e = (NodeList*) malloc(sizeof(NodeList));
-	e->one = one;
-    e->two = two;
-	return e;
-}
-
-void print_tab(int tabs){
-    int i;
-    tabs = tabs*2;
-    for (i= 0 ; i <tabs; i++){
-        printf(" ");
-    }
-}
-
-void print_str(NodeStr *root, int tabs) {
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    if (root->arity == 0) {
-        printf("<estrutura> %s (type: CON)\n", root->nome);
-    } else {
-        printf("<estrutura> %s (aridade: %d)\n", root->nome, root->arity);
-    }
-
-    if (root->op != '\0') {
-        print_tab(tabs+1);
-        printf("<(>\n");
-    }
-
-    print_args(root->one, tabs+1);
-
-    if (root->op != '\0'){
-        print_tab(tabs+1);
-        printf("<)>\n");
-    }
-}
-
-void print_strs(NodeStrs *root, int tabs) {
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    printf("<estruturas>\n");
-
-    print_str(root->one, tabs+1);
-    if (root->op != '\0'){
-        print_tab(tabs);
-        printf("<%c>\n", root->op);
-    }
-    print_strs(root->two, tabs+1);
-}
-
-void print_args(NodeArgs *root, int tabs) {
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    printf("<argumentos>\n");
-
-    print_term(root->one, tabs+1);
-    if (root->op != '\0'){
-        print_tab(tabs);
-        printf("<%c>\n", root->op);
-    }
-    print_args(root->two, tabs+1);
-}
-
-void print_term(NodeTerm *root, int tabs) {
-    char type[4];
-    char var_type[20];
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-
-    if (root->nome[0] != '\0') {
-        datatype_token_to_str(type, root->type);
-        if (root->type == REF_SYMBOL){
-            vartype_token_to_str(var_type, root->var_type);
-            printf("<termo> %s (tipo: %s; tipo_var: %s)\n", root->nome, type, var_type);
-        } else {
-            printf("<termo> %s (tipo: %s)\n", root->nome, type);
-        }
-    } else if(root->one != NULL) {
-        printf("<termo>\n");
-        print_str(root->one, tabs+1);
-    } else {
-        printf("<termo>\n");
-        print_list(root->two, tabs+1);
-    }
-}
-
-void print_list(NodeList *root, int tabs) {
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    printf("<lista>");
-
-    printf("<[>\n");
-    print_term(root->one, tabs+1);
-    if (root->two != NULL) printf("<|>\n");
-    print_term(root->two, tabs+1);
-    printf("<]>\n");
-}
-
-void print_fact(NodeFact *root, int tabs) {
-
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    printf("<fato> (pos: %d)\n", root->pos);
-
-    print_str(root->one, tabs+1);
-
-    printf("<%c>", root->op);
-}
-
-void print_rule(NodeRule *root, int tabs) {
-    if (root == NULL) {
-        return;
-    }
-
-    print_tab(tabs);
-    printf("<regra> (pos: %d) \n", root->pos);
-    print_str(root->one, tabs+1);
-    print_tab(tabs);
-    printf("<:->\n");
-    print_strs(root->two, tabs+1);
-    print_tab(tabs);
-    printf("<.>\n");
-}
-
-void print_header(char tipo[]){
-    printf("\n\n=====================Arvore %s, Linha %d=====================\n", tipo, yylineno);
-}
-
-void print_footer(){
-    printf("\n=========================================================\n");
-}
-
-
-void free_fact(NodeFact *root) {
-	if (root->one) free_str(root->one);
-	free(root);
-}
-
-void free_rule(NodeRule *root) {
-	if (root->one) free_str(root->one);
-	if (root->two) free_strs(root->two);
-	free(root);
-}
-
-void free_str(NodeStr *root) {
-	if (root->one) free_args(root->one);
-
-	free(root);
-}
-
-void free_strs(NodeStrs *root) {
-	if (root->one) free_str(root->one);
-	if (root->two) free_strs(root->two);
-	free(root);
-}
-
-void free_args(NodeArgs *root) {
-	if (root->one) free_term(root->one);
-	if (root->two) free_args(root->two);
-
-	free(root);
-}
-
-void free_term(NodeTerm *root) {
-	if (root->one) free_str(root->one);
-	if (root->two) free_list(root->two);
-
-	free(root);
-}
-
-void free_list(NodeList *root) {
-	if (root->one) free_term(root->one);
-	if (root->two) free_term(root->two);
-	free(root);
-}

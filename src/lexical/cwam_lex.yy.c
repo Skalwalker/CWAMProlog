@@ -836,7 +836,7 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 #line 53 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext, 0, yylineno, BASIC_VAR); return VAR;}
+{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return VAR;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -846,7 +846,7 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 57 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext, 0, yylineno, SINGLETON_VAR); return SINGLE_VAR;}
+{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return SINGLE_VAR;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP

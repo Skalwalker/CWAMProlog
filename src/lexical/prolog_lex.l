@@ -50,11 +50,11 @@ ANON_VAR "_"
 
 {CONSTANTE}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
 
-{VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext, 0, yylineno, BASIC_VAR); return VAR;}
+{VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return VAR;}
 
 {ANON_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return ANON_VAR;}
 
-{SINGLE_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); st_add_symbol(REF_SYMBOL, yytext, 0, yylineno, SINGLETON_VAR); return SINGLE_VAR;}
+{SINGLE_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return SINGLE_VAR;}
 
 
 "(" {check_error(); c_col += 1; return '(';}
