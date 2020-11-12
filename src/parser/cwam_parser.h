@@ -67,7 +67,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 49 "src/parser/prolog_bison.y"
+#line 50 "src/parser/prolog_bison.y"
 
     char con[100];
     char var[100];

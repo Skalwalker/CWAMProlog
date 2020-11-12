@@ -1,3 +1,6 @@
+#ifndef INC_TREE_HEADER
+#define INC_TREE_HEADER
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -86,3 +89,5 @@ void free_strs(NodeStrs *root);
 void free_args(NodeArgs *root);
 void free_term(NodeTerm *root);
 void free_list(NodeList *root);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef INC_SYMBOL_HEADER
+#define INC_SYMBOL_HEADER
+
 #include "uthash.h"
 #include "shared.h"
 
@@ -15,4 +18,4 @@ void st_delete();
 void st_add_symbol(int symbol, char *name, int arity, int pos, int var_type);
 void st_print();
 
-
+#endif

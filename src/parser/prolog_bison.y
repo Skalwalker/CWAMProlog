@@ -2,7 +2,9 @@
 %defines
 %define parse.error verbose
 %define api.pure
+
 %{
+
     #include "arvore.h"
     #include "../wam/include/main.h"
 
@@ -17,7 +19,6 @@
 
     void check_var();
     void check_cont(char new_str[], int arity);
-
 
     typedef struct already_added {
         char name[100];
@@ -84,7 +85,6 @@
 %destructor { free_term($$); } <term>
 %destructor { free_args($$); } <args>
 
-
 %%
 
 programa:
@@ -104,8 +104,8 @@ clausula:
             check_cont($1->one->nome, $1->one->arity);
             check_var();
             hash_variable_delete();
-            // flatten_fact();
-            free_fact($1);
+            flatten_fact($1);
+            // free_fact($1);
         }
     | regra {
               print_header("Regra");
@@ -114,7 +114,6 @@ clausula:
               check_cont($1->one->nome, $1->one->arity);
               check_var();
               hash_variable_delete();
-            //   flatten_rule();
               free_rule($1);
             }
     | error '.' { yyerrok; }
@@ -125,7 +124,9 @@ fato:
 ;
 
 regra:
-    estrutura RULE_SYM estruturas '.' {$$ = new_node_rule($1, $3, '.', yylineno);}
+    estrutura RULE_SYM estruturas '.' {
+        $$ = new_node_rule($1, $3, '.', yylineno);
+    }
 ;
 
 estruturas:

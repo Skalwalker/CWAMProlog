@@ -19,10 +19,23 @@ Node* create_node(DataType x){
     newNode->prev = NULL;
 
     if (DEBUG == 1) {
-        printf("Created Node with Element %d\n", x.data);
+        printf("Created Node with Element Type: %d\n", x.data_type);
     }
 
     return newNode;
+}
+
+DataType create_data(int type, int heap_ref, Tag tag){
+    DataType new;
+    new.data_type = type;
+
+    if (type == TAG_SYMBOL){
+        new.tag = tag;
+    } else {
+        new.heap_ref = heap_ref;
+    }
+
+    return new;
 }
 
 int heap_insert_tail(Heap *heap, Node *node){
@@ -87,9 +100,9 @@ int print_heap(Heap* heap){
     }
 
     while (current != NULL){
-        printf("Element = %d\n", current->data.data);
-        printf("\tNext = %d\n", current->next->data.data);
-        printf("\tPrev = %d\n", current->prev->data.data);
+        printf("Element = %d\n", current->index);
+        printf("\tNext = %d\n", current->next->index);
+        printf("\tPrev = %d\n", current->prev->index);
         current = current->next;
     }
 
@@ -105,9 +118,9 @@ int print_heap_reversed(Heap* heap) {
     }
 
     while (current != NULL){
-        printf("Element = %d\n", current->data.data);
-        printf("\tNext = %d\n", current->next->data.data);
-        printf("\tPrev = %d\n", current->prev->data.data);
+        printf("Element = %d\n", current->index);
+        printf("\tNext = %d\n", current->next->index);
+        printf("\tPrev = %d\n", current->prev->index);
         current = current->prev;
     }
 

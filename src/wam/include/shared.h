@@ -12,12 +12,13 @@ enum DATATYPES {
     STR_SYMBOL = 2,
     CON_SYMBOL = 3,
     LIS_SYMBOL = 4,
+    TAG_SYMBOL = 5,
 };
 
 enum VARTYPES {
-    BASIC_VAR = 5,
-    SINGLETON_VAR = 6,
-    ANONYM_VAR = 7,
+    BASIC_VAR = 6,
+    SINGLETON_VAR = 7,
+    ANONYM_VAR = 8,
 };
 
 

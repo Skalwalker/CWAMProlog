@@ -1,3 +1,6 @@
+#ifndef INC_INSTSET_HEADER
+#define INC_INSTSET_HEADER
+
 int letterValue2(char l);
 
 /* Put Instructions */
@@ -17,3 +20,5 @@ void get_value();
 /* Unify Instructions */
 void unify_variable();
 void unify_value();
+
+#endif
