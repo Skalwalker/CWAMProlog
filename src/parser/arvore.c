@@ -124,7 +124,14 @@ void print_tree(TreeNode *root, int tabs) {
 void free_tree(TreeNode *root) {
     if (root->left) free_tree(root->left);
     if (root->right) free_tree(root->right);
-    free(root->term_data);
-    free(root->str_data);
+
+    if (root->node_type == NODE_STR){
+        free(root->str_data);
+    }
+
+    if (root->node_type == NODE_TERM){
+        free(root->term_data);
+    }
+
     free(root);
 }
