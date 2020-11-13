@@ -1,6 +1,5 @@
 #include "../include/registers.h"
 
-
 RegTable *r_table = NULL;
 int reg_counter = 1;
 

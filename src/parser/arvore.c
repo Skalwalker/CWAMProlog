@@ -28,7 +28,7 @@ TreeNode* new_tree_node(TreeNode* left, TreeNode* right, int node_type, TermData
 
 StrData *new_str(char *nome, int arity) {
     StrData *new_str;
-    new_str = (StrData*)malloc(sizeof(StrData*));
+    new_str = (StrData*)malloc(sizeof(StrData));
 
     strcpy(new_str->nome, nome);
     new_str->arity = arity;
@@ -38,7 +38,7 @@ StrData *new_str(char *nome, int arity) {
 
 TermData *new_term(char *nome, int type, int var_type) {
     TermData *new_term;
-    new_term = (TermData*)malloc(sizeof(TermData*));
+    new_term = (TermData*)malloc(sizeof(TermData));
 
     strcpy(new_term->nome, nome);
     new_term->type = type;
@@ -86,7 +86,6 @@ void print_tree(TreeNode *root, int tabs) {
             term_nd = root->term_data;
             if (term_nd != NULL) {
                 datatype_token_to_str(type, term_nd->type);
-                printf("%d", term_nd->type);
                 if (term_nd->type == REF_SYMBOL) {
                     vartype_token_to_str(var_type, term_nd->var_type);
                     printf("<termo> %s (tipo: %s; tipo_var: %s)\n", term_nd->nome, type, var_type);

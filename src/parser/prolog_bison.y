@@ -92,7 +92,7 @@ clausula:
         print_header("Fato");
         print_tree($1, 0);
         print_footer();
-        // check_cont($1->left->nome, $1->left->arity);
+        check_cont($1->left->str_data->nome, $1->left->str_data->arity);
         check_var();
         hash_variable_delete();
         // flatten_fact($1);
@@ -102,7 +102,7 @@ clausula:
         print_header("Regra");
         print_tree($1, 0);
         print_footer();
-    //   check_cont($1->left->nome, $1->left->arity);
+        check_cont($1->left->str_data->nome, $1->left->str_data->arity);
         check_var();
         hash_variable_delete();
         free_tree($1);
@@ -251,10 +251,10 @@ void check_var(){
     VarTable *v;
     for(v=var_table; v!=NULL; v=v->hh.next) {
         if ((v->var_type == BASIC_VAR)&&(v->occurrances == 1)) {
-            printf("WARNING: %s:%d:%d: Semantic error, singleton variables: [%s]",  file_name, yylineno, error_col, v->name);
+            printf("WARNING: %s:%d:%d: Semantic error, singleton variables: [%s]\n",  file_name, yylineno, error_col, v->name);
         }
         if ((v->var_type == SINGLETON_VAR)&&(v->occurrances > 1)){
-            printf("WARNING: %s:%d:%d: Semantic error, singleton−marked variable appears more than once: %s",  file_name, yylineno, error_col, v->name);
+            printf("WARNING: %s:%d:%d: Semantic error, singleton−marked variable appears more than once: %s\n",  file_name, yylineno, error_col, v->name);
         }
     }
 }
@@ -271,7 +271,7 @@ void check_cont(char new_str[], int arity){
         strcpy(last, new_str);
     } else {
         if (strcmp(new_str, last) != 0||error_last == 1){
-            printf("WARNING: %s:%d:%d: Semantic error, clauses of %s are not together in the source-file",  file_name, yylineno, error_col, new_str);
+            printf("WARNING: %s:%d:%d: Semantic error, clauses of %s are not together in the source-file\n",  file_name, yylineno, error_col, new_str);
             strcpy(last, new_str);
             error_last = 1;
         } else {
