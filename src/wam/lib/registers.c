@@ -16,7 +16,7 @@ int table_add_reg(char *name) {
         new->reg_num = reg_counter;
         HASH_ADD_STR(r_table, name, new);
         reg_counter += 1;
-        return -1;
+        return new->reg_num;
     } else {
         return new->reg_num;
     }
@@ -38,3 +38,6 @@ void print_registers() {
         printf("user id %d: name %s\n", r->reg_num, r->name);
     }
 }
+
+
+

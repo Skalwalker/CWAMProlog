@@ -36,6 +36,7 @@ void vartype_token_to_str(char res[], int type) {
         case ANONYM_VAR:
             strcpy(res, "ANONYMOUS VAR\0");
             break;
+
         default:
             break;
     }

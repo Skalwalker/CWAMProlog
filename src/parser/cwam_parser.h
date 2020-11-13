@@ -73,15 +73,9 @@ union YYSTYPE
     char var[100];
     char svar[100];
     char avar[100];
-    struct node_fact *fato;
-    struct node_rule *regra;
-    struct node_str *str;
-    struct node_strs *strs;
-    struct node_term *term;
-    struct node_args *args;
-    struct node_list *list;
+    TreeNode *node;
 
-#line 85 "src/parser/cwam_parser.h"
+#line 79 "src/parser/cwam_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

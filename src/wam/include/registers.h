@@ -26,8 +26,11 @@ int table_add_reg(char *name);
 void table_reg_delete();
 void print_registers();
 
-void create_register();
-void load_register();
-void store_register();
+
+// void create_register();
+
+
+// void load_register();
+// void store_register();
 
 #endif

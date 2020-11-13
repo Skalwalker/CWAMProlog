@@ -6,9 +6,9 @@
 int heap_counter;
 
 typedef struct tag {
-    char name[100];
-    char composed_name[120];
-    int arity;
+    char name[100]; // f
+    char composed_name[120]; // f/2
+    int arity; //2
 } Tag;
 
 typedef struct data_type {
@@ -21,16 +21,16 @@ typedef struct data_type {
 
 DataType create_data(int type, int heap_ref, Tag tag);
 
-typedef struct node {
+typedef struct heap_node {
     int index;
     struct data_type data;
-    struct node *next;
-    struct node *prev;
+    struct heap_node *next;
+    struct heap_node *prev;
 } Node;
 
 typedef struct heap {
-    struct node *head;
-    struct node *tail;
+    struct heap_node *head;
+    struct heap_node *tail;
 } Heap;
 
 Heap* create_heap();

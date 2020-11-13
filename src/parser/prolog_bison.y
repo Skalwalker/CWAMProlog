@@ -52,13 +52,7 @@
     char var[100];
     char svar[100];
     char avar[100];
-    struct node_fact *fato;
-    struct node_rule *regra;
-    struct node_str *str;
-    struct node_strs *strs;
-    struct node_term *term;
-    struct node_args *args;
-    struct node_list *list;
+    TreeNode *node;
 }
 
 %token <con> CON
@@ -67,28 +61,25 @@
 %token <avar> ANON_VAR
 %token RULE_SYM
 
-%type <list> list
-%type <fato> fato
-%type <regra> regra
-%type <str> estrutura
-%type <strs> estruturas
-%type <term> termo
-%type <args> argumentos
+%type <node> list
+%type <node> fato
+%type <node> regra
+%type <node> estrutura
+%type <node> estruturas
+%type <node> termo
+%type <node> argumentos
+
+%destructor { free_tree($$); } <node>
 
 %start programa
-
-%destructor { free_list($$);} <list>
-%destructor { free_fact($$); hash_variable_delete();} <fato>
-%destructor { free_rule($$); hash_variable_delete();} <regra>
-%destructor { free_str($$); } <str>
-%destructor { free_strs($$); } <strs>
-%destructor { free_term($$); } <term>
-%destructor { free_args($$); } <args>
 
 %%
 
 programa:
-    predicado {hash_structure_delete();  hash_variable_delete();}
+    predicado {
+        hash_structure_delete();
+        hash_variable_delete();
+    }
 ;
 
 predicado:
@@ -98,80 +89,112 @@ predicado:
 
 clausula:
     fato {
-            print_header("Fato");
-            print_fact($1, 0);
-            print_footer();
-            check_cont($1->one->nome, $1->one->arity);
-            check_var();
-            hash_variable_delete();
-            flatten_fact($1);
-            // free_fact($1);
-        }
+        print_header("Fato");
+        print_tree($1, 0);
+        print_footer();
+        // check_cont($1->left->nome, $1->left->arity);
+        check_var();
+        hash_variable_delete();
+        // flatten_fact($1);
+        free_tree($1);
+    }
     | regra {
-              print_header("Regra");
-              print_rule($1, 0);
-              print_footer();
-              check_cont($1->one->nome, $1->one->arity);
-              check_var();
-              hash_variable_delete();
-              free_rule($1);
-            }
+        print_header("Regra");
+        print_tree($1, 0);
+        print_footer();
+    //   check_cont($1->left->nome, $1->left->arity);
+        check_var();
+        hash_variable_delete();
+        free_tree($1);
+    }
     | error '.' { yyerrok; }
 ;
 
 fato:
-    estrutura '.' {$$ = new_node_fact($1, '.', yylineno);}
+    estrutura '.' {
+        $$ = new_tree_node($1, NULL, NODE_FACT, NULL, NULL);
+    }
 ;
 
 regra:
     estrutura RULE_SYM estruturas '.' {
-        $$ = new_node_rule($1, $3, '.', yylineno);
+        $$ = new_tree_node($1, $3, NODE_RULE, NULL, NULL);
     }
 ;
 
 estruturas:
-    estrutura {$$ = new_node_strs($1, NULL, '\0');}
-    | estrutura ',' estruturas {$$ = new_node_strs($1, $3, ',');}
+    estrutura {
+        $$ = new_tree_node($1, NULL, NODE_STRS, NULL, NULL);
+    }
+    | estrutura ',' estruturas {
+        $$ = new_tree_node($1, $3, NODE_STRS, NULL, NULL);
+    }
 ;
 
 estrutura:
-    CON {$$ = new_node_str(NULL, $1, '\0', arity);st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);}
+    CON {
+        StrData *str = new_str($1, 0);
+        $$ = new_tree_node(NULL, NULL, NODE_STR, NULL, str); // DIREITA?
+        st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);
+    }
     | CON '(' argumentos ')' {
-                                    $$ = new_node_str($3, $1, ')', arity);
-                                    strcat($1, "/");
-                                    char temp[100];
-                                    sprintf(temp,"%d",arity);
-                                    strcat($1, temp);
-                                    st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
-                                    arity = 0;
-                            }
+        StrData *str = new_str($1, arity);
+        $$ = new_tree_node($3, NULL, NODE_STR, NULL, str); //INVERSO?
+        strcat($1, "/");
+        char temp[100];
+        sprintf(temp,"%d",arity);
+        strcat($1, temp);
+        st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
+        arity = 0;
+    }
 ;
 
 argumentos:
-    termo {arity += 1; $$ = new_node_args($1, NULL, '\0');}
-    | termo ',' argumentos {arity += 1; $$ = new_node_args($1, $3, ',');}
+    termo {
+        arity += 1;
+        $$ = new_tree_node($1, NULL, NODE_ARGS, NULL, NULL);
+    }
+    | termo ',' argumentos {
+        arity += 1;
+        $$ = new_tree_node($1, $3, NODE_ARGS, NULL, NULL);
+    }
 ;
 
 termo:
-    estrutura {$$ = new_node_term($1, NULL, "\0", STR_SYMBOL, 0);}
+    estrutura {
+        $$ = new_tree_node($1, NULL, NODE_TERM, NULL, NULL);
+    }
     | VAR {
-            hash_add_variable($1, BASIC_VAR, 1);
-            $$ = new_node_term(NULL, NULL, $1, REF_SYMBOL, BASIC_VAR);
-            st_add_symbol(REF_SYMBOL, $1, 0, yylineno, BASIC_VAR);
-        }
+        TermData *term = new_term($1, REF_SYMBOL, BASIC_VAR);
+        hash_add_variable($1, BASIC_VAR, 1);
+        $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
+        st_add_symbol(REF_SYMBOL, $1, 0, yylineno, BASIC_VAR);
+    }
     | SINGLE_VAR {
-                  hash_add_variable($1, SINGLETON_VAR, 1);
-                  $$ = new_node_term(NULL, NULL, $1, REF_SYMBOL, SINGLETON_VAR);
-                  st_add_symbol(REF_SYMBOL, $1, 0, yylineno, SINGLETON_VAR);
-                }
-    | ANON_VAR  {$$ = new_node_term(NULL, NULL, $1, REF_SYMBOL, ANONYM_VAR);}
-    | list {$$ = new_node_term(NULL, $1, "\0", LIS_SYMBOL, 0);}
+        TermData *term = new_term($1, REF_SYMBOL, SINGLETON_VAR);
+        hash_add_variable($1, SINGLETON_VAR, 1);
+        $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
+        st_add_symbol(REF_SYMBOL, $1, 0, yylineno, SINGLETON_VAR);
+    }
+    | ANON_VAR  {
+        TermData *term = new_term($1, REF_SYMBOL, ANONYM_VAR);
+        $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
+    }
+    | list {
+        $$ = new_tree_node($1, NULL, NODE_TERM, NULL, NULL);
+    }
 ;
 
 list:
-    '[' ']' {$$ = new_node_list(NULL, NULL);}
-    | '[' termo ']' {$$ = new_node_list($2, NULL);}
-    | '[' termo '|' termo ']' {$$ = new_node_list($2, $4);}
+    '[' ']' {
+        $$ = new_tree_node(NULL, NULL, NODE_LIS, NULL, NULL);
+    }
+    | '[' termo ']' {
+        $$ = new_tree_node($2, NULL, NODE_LIS, NULL, NULL);
+    }
+    | '[' termo '|' termo ']' {
+        $$ = new_tree_node($2, $4, NODE_LIS, NULL, NULL);
+    }
 ;
 
 %%
