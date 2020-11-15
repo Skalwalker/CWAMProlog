@@ -14,12 +14,13 @@ typedef struct tag {
 typedef struct data_type {
     int data_type;
     union {
-        Tag tag;
+        Tag* tag;
         int heap_ref;
     };
 } DataType;
 
-DataType create_data(int type, int heap_ref, Tag tag);
+
+DataType* create_data(int type, int heap_ref, Tag* tag);
 
 typedef struct heap_node {
     int index;

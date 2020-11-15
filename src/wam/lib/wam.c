@@ -1,72 +1,105 @@
 #include "../include/wam.h"
 
-// Heap *heap;
+void token_children(TreeNode* root) {
+    if (root == NULL) {
+        return;
+    }
 
-// void create_wam(){
-//     TempRegister x[100];
-//     heap = create_heap();
-// }
+    if (root->node_type == NODE_TERM) {
+        if (root->term_data != NULL) {
+            RegTable *reg = table_reg_lookup(root->term_data->nome);
+            add_stream(reg->reg);
+            printf("%s ", root->term_data->nome);
+            return;
+        }
+    } else if (root->node_type == NODE_STR) {
+        RegTable *reg = table_reg_lookup(root->term_data->nome);
+        add_stream(reg->reg);
+        printf("%s ", root->str_data->nome);
+        return;
+    }
 
-// void flatten_fact(NodeFact* fact){
-//     NodeStr *root = fact->one;
-//     flatten_args(root);
-//     printf("\n");
-//     print_registers();
-//     dfs(root);
-// }
+    token_children(root->left);
+    token_children(root->right);
+}
 
-// void dfs(NodeStr *root) {
-//     NodeArgs *arg_i;
-//     NodeTerm *term_i;
+void token_stream(TreeNode* root) {
+    TreeNode *left, *right;
 
-//     for (arg_i = root->one; arg_i != NULL; arg_i = arg_i->two) {
-//         term_i = arg_i->one;
+    if (root == NULL) {
+        return;
+    }
 
-//         if (term_i->one != NULL) {
-//             printf("X%d ", table_add_reg(term_i->one->nome));
-//             if (term_i->type == STR_SYMBOL){
-//                 dfs(term_i->one);
-//             }
-
-//         } else {
-//             printf("X%d ", table_add_reg(term_i->nome));
-//         }
-//     }
-// }
-
-
-// void flatten_args(NodeStr *root) {
-//     NodeArgs *arg_i;
-//     NodeTerm *term_i;
-//     Queue *head = NULL;
-//     Queue *elt, *tmp, *str;
-
-//     printf("X%d ", table_add_reg(root->nome));
-
-//     for (arg_i = root->one; arg_i != NULL; arg_i = arg_i->two) {
-//         term_i = arg_i->one;
-
-//         if (term_i->one == NULL) {
-//             printf("X%d ", table_add_reg(term_i->nome));
-//         } else {
-//             printf("X%d ", table_add_reg(term_i->one->nome));
-//             str = (Queue*)malloc(sizeof(Queue));
-//             str->data = term_i->one;
-//             LL_APPEND(head, str);
-//         }
-//     }
-
-//     LL_FOREACH_SAFE(head,elt,tmp) {
-//       LL_DELETE(head, elt);
-//       flatten_args(elt->data);
-//       free(elt);
-//     }
-// }
+    if ((root->left == NULL)&&(root->right == NULL)) {
+        return;
+    }
 
 
-// void tokenize() {
+    left = root->left;
+    right = root->right;
 
-// }
+    token_stream(left);
+    token_stream(right);
+
+    if (root->node_type == NODE_STR) {
+        RegTable *reg = table_reg_lookup(root->str_data->nome);
+        add_stream(reg->reg);
+        printf("%s ", root->str_data->nome);
+        token_children(root->left);
+        token_children(root->right);
+    }
+}
+
+void allocate_reg_table(TreeNode *node) {
+    TermData* term;
+    DataType* data;
+    int value;
+
+    if (node->node_type == NODE_TERM) {
+        term = node->term_data;
+        if (term != NULL) {
+            data = create_data(REF_SYMBOL, 0, NULL);
+            value = table_add_reg(term->nome, data);
+        }
+    } else if (node->node_type == NODE_STR) {
+        data = create_data(STR_SYMBOL, 0, NULL);
+        value = table_add_reg(node->str_data->nome, data);
+    }
+
+}
+
+
+void register_names(TreeNode* root) {
+    TreeNode *node;
+    Queue *head = NULL;
+    Queue *current = NULL;
+    Queue *str;
+
+    str = (Queue*)malloc(sizeof *str);
+    str->data = root;
+    LL_APPEND(head, str);
+
+    while (head != NULL) {
+        current = head;
+        LL_DELETE(head, current);
+        node = current->data;
+
+        allocate_reg_table(node);
+
+        if (node->left != NULL) {
+            str = (Queue*)malloc(sizeof *str);
+            str->data = node->left;
+            LL_APPEND(head, str);
+        }
+
+        if (node->right != NULL) {
+            str = (Queue*)malloc(sizeof *str);
+            str->data = node->right;
+            LL_APPEND(head, str);
+        }
+    }
+}
+
 
 // void build_heap(){
 

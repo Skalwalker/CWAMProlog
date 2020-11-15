@@ -25,14 +25,16 @@ Node* create_node(DataType x){
     return newNode;
 }
 
-DataType create_data(int type, int heap_ref, Tag tag){
-    DataType new;
-    new.data_type = type;
+DataType* create_data(int type, int heap_ref, Tag* tag){
+    DataType *new;
+    new = (DataType*)malloc(sizeof(DataType));
+
+    new->data_type = type;
 
     if (type == TAG_SYMBOL){
-        new.tag = tag;
+        new->tag = tag;
     } else {
-        new.heap_ref = heap_ref;
+        new->heap_ref = heap_ref;
     }
 
     return new;

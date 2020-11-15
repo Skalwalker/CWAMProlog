@@ -12,13 +12,13 @@
     extern int yylineno;
     extern int error_col;
 
-    int register_input = 1;
+    int reg_input = 1;
     int arity = 0;
     int error_last = 0;
     char last[100];
 
     void check_var();
-    void check_cont(char new_str[], int arity);
+    void check_cont(char new_str[]);
 
     typedef struct already_added {
         char name[100];
@@ -92,17 +92,21 @@ clausula:
         print_header("Fato");
         print_tree($1, 0);
         print_footer();
-        check_cont($1->left->str_data->nome, $1->left->str_data->arity);
+        check_cont($1->left->str_data->nome);
         check_var();
         hash_variable_delete();
-        // flatten_fact($1);
+        register_names($1);
+        print_registers();
+        // RegStream *stream = NULL;
+        token_stream($1);
+        print_stream();
         free_tree($1);
     }
     | regra {
         print_header("Regra");
         print_tree($1, 0);
         print_footer();
-        check_cont($1->left->str_data->nome, $1->left->str_data->arity);
+        check_cont($1->left->str_data->nome);
         check_var();
         hash_variable_delete();
         free_tree($1);
@@ -134,16 +138,16 @@ estruturas:
 estrutura:
     CON {
         StrData *str = new_str($1, 0);
-        $$ = new_tree_node(NULL, NULL, NODE_STR, NULL, str); // DIREITA?
+        $$ = new_tree_node(NULL, NULL, NODE_STR, NULL, str);
         st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);
     }
     | CON '(' argumentos ')' {
-        StrData *str = new_str($1, arity);
-        $$ = new_tree_node($3, NULL, NODE_STR, NULL, str); //INVERSO?
         strcat($1, "/");
         char temp[100];
         sprintf(temp,"%d",arity);
         strcat($1, temp);
+        StrData *str = new_str($1, arity);
+        $$ = new_tree_node($3, NULL, NODE_STR, NULL, str);
         st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
         arity = 0;
     }
@@ -175,10 +179,12 @@ termo:
         hash_add_variable($1, SINGLETON_VAR, 1);
         $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         st_add_symbol(REF_SYMBOL, $1, 0, yylineno, SINGLETON_VAR);
+        reg_input += 1;
     }
     | ANON_VAR  {
         TermData *term = new_term($1, REF_SYMBOL, ANONYM_VAR);
         $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
+        reg_input += 1;
     }
     | list {
         $$ = new_tree_node($1, NULL, NODE_TERM, NULL, NULL);
@@ -259,12 +265,8 @@ void check_var(){
     }
 }
 
-void check_cont(char new_str[], int arity){
+void check_cont(char new_str[]){
     StrAdded *s;
-    strcat(new_str, "/");
-    char temp[100];
-    sprintf(temp,"%d",arity);
-    strcat(new_str, temp);
     HASH_FIND_STR(str_table, new_str, s);
     if (s == NULL) {
         hash_add_structure(new_str);

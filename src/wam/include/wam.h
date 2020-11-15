@@ -6,15 +6,19 @@
 #include "instruction_set.h"
 #include "memory.h"
 
-// typedef struct queue {
-//     // NodeStr *data;
-//     struct queue *next;
-// } Queue;
+typedef struct queue {
+    TreeNode *data;
+    struct queue *next;
+} Queue;
 
 // void create_wam();
+
+void register_names(TreeNode* root);
+void token_stream(TreeNode* root);
+void token_children(TreeNode* root);
+
 // void flatten_fact(NodeFact* fact);
 // void flatten_args(NodeStr *root);
 // void print_tokens(NodeStr *root);
-// void dfs(NodeStr *root);
 
 #endif
