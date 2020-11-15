@@ -95,11 +95,7 @@ clausula:
         check_cont($1->left->str_data->nome);
         check_var();
         hash_variable_delete();
-        register_names($1);
-        print_registers();
-        // RegStream *stream = NULL;
-        token_stream($1);
-        print_stream();
+        execute_wam($1);
         free_tree($1);
     }
     | regra {

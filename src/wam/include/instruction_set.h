@@ -1,7 +1,12 @@
 #ifndef INC_INSTSET_HEADER
 #define INC_INSTSET_HEADER
 
-int letterValue2(char l);
+#include "memory.h"
+#include "wam.h"
+
+extern int heap_register;
+extern Heap *heap;
+
 
 /* Put Instructions */
 void put_structure();

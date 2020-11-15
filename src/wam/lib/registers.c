@@ -31,6 +31,7 @@ int table_add_reg(char *name, DataType *data) {
         new->reg_num = reg_counter;
         reg = create_register(reg_counter, data);
         new->reg = reg;
+        new->on_stream = 0;
         HASH_ADD_STR(r_table, name, new);
         reg_counter += 1;
         return new->reg_num;

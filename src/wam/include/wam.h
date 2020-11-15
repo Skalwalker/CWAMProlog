@@ -11,12 +11,11 @@ typedef struct queue {
     struct queue *next;
 } Queue;
 
-// void create_wam();
-
+void execute_wam(TreeNode *root);
 void register_names(TreeNode* root);
 void token_stream(TreeNode* root);
 void token_children(TreeNode* root);
-
+void map_instruction(TempRegister *reg, int occ);
 // void flatten_fact(NodeFact* fact);
 // void flatten_args(NodeStr *root);
 // void print_tokens(NodeStr *root);

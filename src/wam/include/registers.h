@@ -14,6 +14,7 @@ typedef struct temp_register {
 typedef struct reg_table {
     char name[100];
     int reg_num;
+    int on_stream;
     TempRegister *reg;
     UT_hash_handle hh;
 } RegTable;

@@ -1,5 +1,52 @@
 #include "../include/wam.h"
 
+int heap_register = 0;
+Heap *heap = NULL;
+
+void execute_wam(TreeNode *root){
+    heap = create_heap();
+    register_names(root);
+    print_registers();
+    token_stream(root);
+    print_stream();
+    print_heap_reversed();
+}
+
+void map_instruction(TempRegister *reg, int occ) {
+
+    if (occ == 1){
+        printf("set_value X%d\n", reg->num);
+        set_value(reg);
+    } else {
+        if (reg->data->data_type == STR_SYMBOL) {
+            printf("put_structure %s X%d\n", reg->data->tag->name, reg->num);
+            put_structure(reg);
+        } else if (reg->data->data_type == REF_SYMBOL){
+            printf("set_variable X%d\n", reg->num);
+            set_variable(reg);
+        }
+    }
+}
+
+void process_token(TreeNode *node) {
+
+    if (node->node_type == NODE_TERM) {
+        RegTable *reg = table_reg_lookup(node->term_data->nome);
+        add_stream(reg->reg);
+        map_instruction(reg->reg, reg->on_stream);
+        reg->on_stream = 1;
+        // printf("%s ", node->term_data->nome);
+    } else if (node->node_type == NODE_STR) {
+        RegTable *reg = table_reg_lookup(node->str_data->nome);
+        add_stream(reg->reg);
+        map_instruction(reg->reg, reg->on_stream);
+        reg->on_stream = 1;
+        // printf("%s ", node->str_data->nome);
+    }
+
+    return;
+}
+
 void token_children(TreeNode* root) {
     if (root == NULL) {
         return;
@@ -7,15 +54,11 @@ void token_children(TreeNode* root) {
 
     if (root->node_type == NODE_TERM) {
         if (root->term_data != NULL) {
-            RegTable *reg = table_reg_lookup(root->term_data->nome);
-            add_stream(reg->reg);
-            printf("%s ", root->term_data->nome);
+            process_token(root);
             return;
         }
     } else if (root->node_type == NODE_STR) {
-        RegTable *reg = table_reg_lookup(root->term_data->nome);
-        add_stream(reg->reg);
-        printf("%s ", root->str_data->nome);
+        process_token(root);
         return;
     }
 
@@ -42,9 +85,7 @@ void token_stream(TreeNode* root) {
     token_stream(right);
 
     if (root->node_type == NODE_STR) {
-        RegTable *reg = table_reg_lookup(root->str_data->nome);
-        add_stream(reg->reg);
-        printf("%s ", root->str_data->nome);
+        process_token(root);
         token_children(root->left);
         token_children(root->right);
     }
@@ -53,6 +94,7 @@ void token_stream(TreeNode* root) {
 void allocate_reg_table(TreeNode *node) {
     TermData* term;
     DataType* data;
+    Tag* new_tag;
     int value;
 
     if (node->node_type == NODE_TERM) {
@@ -62,12 +104,12 @@ void allocate_reg_table(TreeNode *node) {
             value = table_add_reg(term->nome, data);
         }
     } else if (node->node_type == NODE_STR) {
-        data = create_data(STR_SYMBOL, 0, NULL);
+        new_tag = create_tag(node->str_data->nome, node->str_data->arity);
+        data = create_data(STR_SYMBOL, 0, new_tag);
         value = table_add_reg(node->str_data->nome, data);
     }
 
 }
-
 
 void register_names(TreeNode* root) {
     TreeNode *node;
@@ -99,12 +141,6 @@ void register_names(TreeNode* root) {
         }
     }
 }
-
-
-// void build_heap(){
-
-// }
-
 
 // p(Z, h(Z, W), f(W)).
 //

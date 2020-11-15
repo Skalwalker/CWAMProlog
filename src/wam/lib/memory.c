@@ -12,35 +12,38 @@ Heap* create_heap(){
     return newHeap;
 }
 
-Node* create_node(DataType x){
+Node* create_node(DataType *x, int heap_top){
     Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->index = heap_top;
     newNode->data = x;
     newNode->next = NULL;
     newNode->prev = NULL;
 
     if (DEBUG == 1) {
-        printf("Created Node with Element Type: %d\n", x.data_type);
+        printf("Created Node with Element Type");
     }
 
     return newNode;
 }
 
+
+Tag* create_tag(char *name, int arity){
+    Tag *new_tag = (Tag*)malloc(sizeof(Tag));
+    strcpy(new_tag->name, name);
+    new_tag->arity = arity;
+    return new_tag;
+}
+
 DataType* create_data(int type, int heap_ref, Tag* tag){
     DataType *new;
     new = (DataType*)malloc(sizeof(DataType));
-
     new->data_type = type;
-
-    if (type == TAG_SYMBOL){
-        new->tag = tag;
-    } else {
-        new->heap_ref = heap_ref;
-    }
-
+    new->tag = tag;
+    new->heap_ref = heap_ref;
     return new;
 }
 
-int heap_insert_tail(Heap *heap, Node *node){
+int heap_insert_tail(Node *node){
 
     if (heap == NULL) {
         return HEAP_NOT_FOUND;
@@ -68,12 +71,11 @@ int heap_insert_tail(Heap *heap, Node *node){
     return HEAP_CREATE_SUCCESS;
 }
 
-int heap_insert_head(Heap *heap, Node *node){
+int heap_insert_head(Node *node){
 
     if (heap == NULL) {
         return HEAP_NOT_FOUND;
     }
-
 
     if (heap->head == NULL) {
         heap->head = node;
@@ -93,38 +95,53 @@ int heap_insert_head(Heap *heap, Node *node){
     return HEAP_CREATE_SUCCESS;
 }
 
-int print_heap(Heap* heap){
+int print_heap(){
     Node* current = heap->head;
+    char temp[4];
 
     if (current == NULL) {
         printf("Empty Heap\n");
         return HEAP_EMPTY;
     }
 
+    printf(".__________________.\n");
+    printf("| key | value      |\n");
     while (current != NULL){
-        printf("Element = %d\n", current->index);
-        printf("\tNext = %d\n", current->next->index);
-        printf("\tPrev = %d\n", current->prev->index);
+        if (current->data->data_type == TAG_SYMBOL) {
+             printf("| %d | %s | \n", current->index, current->data->tag->name);
+        } else {
+            datatype_token_to_str(temp, current->data->data_type);
+            printf("| %d | <%s, %d> | \n", current->index, temp, current->data->heap_ref);
+        }
+
         current = current->next;
     }
+    printf(".__________________.\n");
 
     return HEAP_PRINT_SUCCESS;
 }
 
-int print_heap_reversed(Heap* heap) {
+int print_heap_reversed() {
     Node* current = heap->tail;
+    char temp[4];
 
     if (current == NULL) {
         printf("Empty Heap\n");
         return HEAP_EMPTY;
     }
 
+    printf(".________________.\n");
+    printf("| key | value    |\n");
     while (current != NULL){
-        printf("Element = %d\n", current->index);
-        printf("\tNext = %d\n", current->next->index);
-        printf("\tPrev = %d\n", current->prev->index);
+        if (current->data->data_type == TAG_SYMBOL) {
+             printf("| %3d | %8s | \n", current->index, current->data->tag->name);
+        } else {
+            datatype_token_to_str(temp, current->data->data_type);
+            printf("| %3d | <%s, %d> | \n", current->index, temp, current->data->heap_ref);
+        }
         current = current->prev;
     }
+    printf(".________________.\n");
 
     return HEAP_PRINT_SUCCESS;
 }
