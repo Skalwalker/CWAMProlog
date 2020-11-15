@@ -30,5 +30,6 @@ TempRegister* create_register(int num, DataType *data);
 
 void print_registers();
 void print_stream();
+void add_stream(TempRegister *reg);
 
 #endif
