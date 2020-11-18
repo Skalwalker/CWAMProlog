@@ -535,8 +535,8 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    79,    79,    86,    87,    91,   101,   110,   114,   120,
-     126,   129,   135,   140,   153,   157,   164,   167,   173,   180,
-     185,   191,   194,   197
+     126,   129,   135,   145,   171,   175,   182,   185,   191,   198,
+     203,   209,   212,   215
 };
 #endif
 
@@ -1630,67 +1630,85 @@ yyreduce:
   case 12: /* estrutura: CON  */
 #line 135 "src/parser/prolog_bison.y"
         {
+        strcat((yyvsp[0].con), "/");
+        char temp[100];
+        sprintf(temp,"%d",arity);
+        strcat((yyvsp[0].con), temp);
         StrData *str = new_str((yyvsp[0].con), 0);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_STR, NULL, str);
         st_add_symbol(CON_SYMBOL, (yyvsp[0].con), 0, yylineno, 0);
+        arity = 0;
     }
-#line 1638 "src/parser/cwam_parser.c"
+#line 1643 "src/parser/cwam_parser.c"
     break;
 
   case 13: /* estrutura: CON '(' argumentos ')'  */
-#line 140 "src/parser/prolog_bison.y"
+#line 145 "src/parser/prolog_bison.y"
                              {
+        StrData *str;
+        int str_occ;
         strcat((yyvsp[-3].con), "/");
         char temp[100];
         sprintf(temp,"%d",arity);
         strcat((yyvsp[-3].con), temp);
-        StrData *str = new_str((yyvsp[-3].con), arity);
+        str_occ = st_add_symbol(STR_SYMBOL, (yyvsp[-3].con), arity, yylineno, 0);
+        if (str_occ > 0){
+            char newname[100];
+            char occstr[20];
+            strcat(newname, (yyvsp[-3].con));
+            strcat(newname, ":");
+            sprintf(occstr, "%d", str_occ);
+            strcat(newname, occstr);
+            str = new_str(newname, arity);
+        } else {
+            str = new_str((yyvsp[-3].con), arity);
+
+        }
         (yyval.node) = new_tree_node((yyvsp[-1].node), NULL, NODE_STR, NULL, str);
-        st_add_symbol(STR_SYMBOL, (yyvsp[-3].con), arity, yylineno, 0);
         arity = 0;
-    }
-#line 1653 "src/parser/cwam_parser.c"
-    break;
-
-  case 14: /* argumentos: termo  */
-#line 153 "src/parser/prolog_bison.y"
-          {
-        arity += 1;
-        (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_ARGS, NULL, NULL);
-    }
-#line 1662 "src/parser/cwam_parser.c"
-    break;
-
-  case 15: /* argumentos: termo ',' argumentos  */
-#line 157 "src/parser/prolog_bison.y"
-                           {
-        arity += 1;
-        (yyval.node) = new_tree_node((yyvsp[-2].node), (yyvsp[0].node), NODE_ARGS, NULL, NULL);
     }
 #line 1671 "src/parser/cwam_parser.c"
     break;
 
+  case 14: /* argumentos: termo  */
+#line 171 "src/parser/prolog_bison.y"
+          {
+        arity += 1;
+        (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_ARGS, NULL, NULL);
+    }
+#line 1680 "src/parser/cwam_parser.c"
+    break;
+
+  case 15: /* argumentos: termo ',' argumentos  */
+#line 175 "src/parser/prolog_bison.y"
+                           {
+        arity += 1;
+        (yyval.node) = new_tree_node((yyvsp[-2].node), (yyvsp[0].node), NODE_ARGS, NULL, NULL);
+    }
+#line 1689 "src/parser/cwam_parser.c"
+    break;
+
   case 16: /* termo: estrutura  */
-#line 164 "src/parser/prolog_bison.y"
+#line 182 "src/parser/prolog_bison.y"
               {
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_TERM, NULL, NULL);
     }
-#line 1679 "src/parser/cwam_parser.c"
+#line 1697 "src/parser/cwam_parser.c"
     break;
 
   case 17: /* termo: VAR  */
-#line 167 "src/parser/prolog_bison.y"
+#line 185 "src/parser/prolog_bison.y"
           {
         TermData *term = new_term((yyvsp[0].var), REF_SYMBOL, BASIC_VAR);
         hash_add_variable((yyvsp[0].var), BASIC_VAR, 1);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         st_add_symbol(REF_SYMBOL, (yyvsp[0].var), 0, yylineno, BASIC_VAR);
     }
-#line 1690 "src/parser/cwam_parser.c"
+#line 1708 "src/parser/cwam_parser.c"
     break;
 
   case 18: /* termo: SINGLE_VAR  */
-#line 173 "src/parser/prolog_bison.y"
+#line 191 "src/parser/prolog_bison.y"
                  {
         TermData *term = new_term((yyvsp[0].svar), REF_SYMBOL, SINGLETON_VAR);
         hash_add_variable((yyvsp[0].svar), SINGLETON_VAR, 1);
@@ -1698,53 +1716,53 @@ yyreduce:
         st_add_symbol(REF_SYMBOL, (yyvsp[0].svar), 0, yylineno, SINGLETON_VAR);
         reg_input += 1;
     }
-#line 1702 "src/parser/cwam_parser.c"
+#line 1720 "src/parser/cwam_parser.c"
     break;
 
   case 19: /* termo: ANON_VAR  */
-#line 180 "src/parser/prolog_bison.y"
+#line 198 "src/parser/prolog_bison.y"
                 {
         TermData *term = new_term((yyvsp[0].avar), REF_SYMBOL, ANONYM_VAR);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         reg_input += 1;
     }
-#line 1712 "src/parser/cwam_parser.c"
+#line 1730 "src/parser/cwam_parser.c"
     break;
 
   case 20: /* termo: list  */
-#line 185 "src/parser/prolog_bison.y"
+#line 203 "src/parser/prolog_bison.y"
            {
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_TERM, NULL, NULL);
     }
-#line 1720 "src/parser/cwam_parser.c"
+#line 1738 "src/parser/cwam_parser.c"
     break;
 
   case 21: /* list: '[' ']'  */
-#line 191 "src/parser/prolog_bison.y"
+#line 209 "src/parser/prolog_bison.y"
             {
         (yyval.node) = new_tree_node(NULL, NULL, NODE_LIS, NULL, NULL);
     }
-#line 1728 "src/parser/cwam_parser.c"
+#line 1746 "src/parser/cwam_parser.c"
     break;
 
   case 22: /* list: '[' termo ']'  */
-#line 194 "src/parser/prolog_bison.y"
+#line 212 "src/parser/prolog_bison.y"
                     {
         (yyval.node) = new_tree_node((yyvsp[-1].node), NULL, NODE_LIS, NULL, NULL);
     }
-#line 1736 "src/parser/cwam_parser.c"
+#line 1754 "src/parser/cwam_parser.c"
     break;
 
   case 23: /* list: '[' termo '|' termo ']'  */
-#line 197 "src/parser/prolog_bison.y"
+#line 215 "src/parser/prolog_bison.y"
                               {
         (yyval.node) = new_tree_node((yyvsp[-3].node), (yyvsp[-1].node), NODE_LIS, NULL, NULL);
     }
-#line 1744 "src/parser/cwam_parser.c"
+#line 1762 "src/parser/cwam_parser.c"
     break;
 
 
-#line 1748 "src/parser/cwam_parser.c"
+#line 1766 "src/parser/cwam_parser.c"
 
       default: break;
     }
@@ -1974,7 +1992,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 202 "src/parser/prolog_bison.y"
+#line 220 "src/parser/prolog_bison.y"
 
 
 void hash_add_variable(char *name, int var_type, int occurrances) {

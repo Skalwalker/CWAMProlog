@@ -2,11 +2,17 @@
 #define INC_INSTSET_HEADER
 
 #include "memory.h"
+#include "registers.h"
 #include "wam.h"
 
-extern int heap_register;
-extern Heap *heap;
+enum MODES {
+    WRITE = 0,
+    READ = 1
+};
 
+extern int heap_register;
+extern int subterm_register;
+extern Heap *heap;
 
 /* Put Instructions */
 void put_structure();

@@ -133,18 +133,36 @@ estruturas:
 
 estrutura:
     CON {
-        StrData *str = new_str($1, 0);
-        $$ = new_tree_node(NULL, NULL, NODE_STR, NULL, str);
-        st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);
-    }
-    | CON '(' argumentos ')' {
         strcat($1, "/");
         char temp[100];
         sprintf(temp,"%d",arity);
         strcat($1, temp);
-        StrData *str = new_str($1, arity);
+        StrData *str = new_str($1, 0);
+        $$ = new_tree_node(NULL, NULL, NODE_STR, NULL, str);
+        st_add_symbol(CON_SYMBOL, $1, 0, yylineno, 0);
+        arity = 0;
+    }
+    | CON '(' argumentos ')' {
+        StrData *str;
+        int str_occ;
+        strcat($1, "/");
+        char temp[100];
+        sprintf(temp,"%d",arity);
+        strcat($1, temp);
+        str_occ = st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
+        if (str_occ > 0){
+            char newname[100];
+            char occstr[20];
+            strcat(newname, $1);
+            strcat(newname, ":");
+            sprintf(occstr, "%d", str_occ);
+            strcat(newname, occstr);
+            str = new_str(newname, arity);
+        } else {
+            str = new_str($1, arity);
+
+        }
         $$ = new_tree_node($3, NULL, NODE_STR, NULL, str);
-        st_add_symbol(STR_SYMBOL, $1, arity, yylineno, 0);
         arity = 0;
     }
 ;

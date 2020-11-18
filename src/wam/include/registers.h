@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "uthash.h"
 #include "utlist.h"
-
+#include "../../parser/arvore.h"
 
 typedef struct temp_register {
     int num;

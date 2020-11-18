@@ -130,18 +130,18 @@ int print_heap_reversed() {
         return HEAP_EMPTY;
     }
 
-    printf(".________________.\n");
-    printf("| key | value    |\n");
+    printf(".__________________.\n");
+    printf("| key | value      |\n");
     while (current != NULL){
         if (current->data->data_type == TAG_SYMBOL) {
-             printf("| %3d | %8s | \n", current->index, current->data->tag->name);
+             printf("| %3d | %10s | \n", current->index, current->data->tag->name);
         } else {
             datatype_token_to_str(temp, current->data->data_type);
-            printf("| %3d | <%s, %d> | \n", current->index, temp, current->data->heap_ref);
+            printf("| %3d | <%s, %3d> | \n", current->index, temp, current->data->heap_ref);
         }
         current = current->prev;
     }
-    printf(".________________.\n");
+    printf(".__________________.\n");
 
     return HEAP_PRINT_SUCCESS;
 }

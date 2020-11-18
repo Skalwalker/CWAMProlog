@@ -5,6 +5,9 @@ RegStream *stream = NULL;
 
 int reg_counter = 1;
 
+int heap_register = 0;
+int subterm_register = 0;
+
 void add_stream(TempRegister *reg){
     RegStream *new;
     new = (RegStream*)malloc(sizeof(RegStream));
@@ -22,6 +25,7 @@ int table_add_reg(char *name, DataType *data) {
 
     RegTable *new;
     TempRegister *reg;
+
 
     HASH_FIND_STR(r_table, name, new);
 

@@ -6,18 +6,29 @@
 #include "instruction_set.h"
 #include "memory.h"
 
+enum INSTRUCTION_TYPE {
+    QUERY_INSTR = 41,
+    PROG_INSTR = 42
+};
+
 typedef struct queue {
     TreeNode *data;
+    int visited;
+    int inited;
     struct queue *next;
 } Queue;
 
 void execute_wam(TreeNode *root);
 void register_names(TreeNode* root);
-void token_stream(TreeNode* root);
-void token_children(TreeNode* root);
-void map_instruction(TempRegister *reg, int occ);
-// void flatten_fact(NodeFact* fact);
-// void flatten_args(NodeStr *root);
-// void print_tokens(NodeStr *root);
+
+void query_token_stream(TreeNode* root);
+void query_token_children(TreeNode* root);
+
+void prog_token_stream(TreeNode* root);
+
+void process_token(TreeNode *node, int init, int inst_type);
+
+void map_instruction(TempRegister *reg, int occ, int init, int inst_type);
+
 
 #endif

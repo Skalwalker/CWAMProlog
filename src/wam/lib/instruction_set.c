@@ -1,28 +1,6 @@
 #include "../include/instruction_set.h"
 
-// typedef struct tag {
-//     char name[100]; // f
-//     int arity; //2
-// } Tag;
-
-// typedef struct temp_register {
-//     int num;
-//     DataType *data;
-// } TempRegister;
-
-// typedef struct data_type {
-//     int data_type;
-//     int heap_ref;
-//     Tag* tag;
-// } DataType;
-
-// typedef struct heap_node {
-//     int index;
-//     DataType *data;
-//     struct heap_node *next;
-//     struct heap_node *prev;
-// } Node;
-
+int mode;
 
 /* Put Instructions */
 void put_structure(TempRegister *reg) {
@@ -88,10 +66,41 @@ void get_value(){
 }
 
 /* Unify Instructions */
-void unify_variable(){
+void unify_variable(TempRegister *reg){
+    switch (mode) {
+    case WRITE:
+        /* code */
+        break;
+    case READ:
+        /* code */
+        break;
+
+    default:
+        break;
+    }
+    subterm_register += 1;
+}
+
+void unify_value(TempRegister *reg) {
+    switch (mode) {
+    case WRITE:
+        /* code */
+        break;
+    case READ:
+        /* code */
+        break;
+
+    default:
+        break;
+    }
+
+    subterm_register;
+}
+
+void deref() {
 
 }
 
-void unify_value() {
+void unify() {
 
 }
