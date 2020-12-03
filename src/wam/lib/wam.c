@@ -1,15 +1,20 @@
 #include "../include/wam.h"
 
 Heap *heap = NULL;
+PDLNode *pdl = NULL;
 
-void execute_wam(TreeNode *root){
-    heap = create_heap();
-    register_names(root);
-    print_registers();
-    prog_token_stream(root);
-    // query_token_stream(root);
-    // print_stream();
-    // print_heap_reversed();
+void execute_wam(TreeNode *root, int query_prog){
+    if (query_prog == 0) {
+        destroy_heap();
+        heap = create_heap();
+        register_names(root);
+        print_registers();
+        query_token_stream(root);
+    } else if (query_prog == 1) {
+        register_names(root);
+        print_registers();
+        prog_token_stream(root);
+    }
 }
 
 void map_instruction(TempRegister *reg, int occ, int init, int inst_type) {
@@ -30,15 +35,19 @@ void map_instruction(TempRegister *reg, int occ, int init, int inst_type) {
     } else if (inst_type == PROG_INSTR) {
         if ((occ == 1)&&(reg->data->data_type == REF_SYMBOL)){
             printf("unify_value X%d\n", reg->num);
+            unify_value(reg);
         } else {
             if (reg->data->data_type == STR_SYMBOL) {
                 if (init == 1){
                     printf("get_structure %s X%d\n", reg->data->tag->name, reg->num);
+                    get_structure(reg);
                 } else {
                     printf("unify_variable X%d\n", reg->num);
+                    unify_variable(reg);
                 }
             } else if (reg->data->data_type == REF_SYMBOL){
                 printf("unify_variable X%d\n", reg->num);
+                unify_variable(reg);
             }
         }
     }
@@ -197,18 +206,17 @@ void allocate_reg_table(TreeNode *node) {
     TermData* term;
     DataType* data;
     Tag* new_tag;
-    int value;
 
     if (node->node_type == NODE_TERM) {
         term = node->term_data;
         if (term != NULL) {
-            data = create_data(REF_SYMBOL, 0, NULL);
-            value = table_add_reg(term->nome, data);
+            data = create_data(REF_SYMBOL, -1, NULL);
+            table_add_reg(term->nome, data);
         }
     } else if (node->node_type == NODE_STR) {
         new_tag = create_tag(node->str_data->nome, node->str_data->arity);
-        data = create_data(STR_SYMBOL, 0, new_tag);
-        value = table_add_reg(node->str_data->nome, data);
+        data = create_data(STR_SYMBOL, -2, new_tag);
+        table_add_reg(node->str_data->nome, data);
     }
 
 }

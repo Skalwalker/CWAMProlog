@@ -1,5 +1,6 @@
 %debug
 %defines
+%parse-param {int query_prog} {int verbose}
 %define parse.error verbose
 %define api.pure
 
@@ -40,8 +41,8 @@
     void hash_add_variable(char *name, int var_type, int occurrances);
     void hash_variable_delete();
 
-    int yyparse(void);
-	void yyerror (char const *s);
+    int yyparse(int query_prog, int verbose);
+	void yyerror (YYLTYPE *llocp, int query_prog, int verbose, char const *s);
     int yylex();
 %}
 
@@ -95,7 +96,7 @@ clausula:
         check_cont($1->left->str_data->nome);
         check_var();
         hash_variable_delete();
-        execute_wam($1);
+        execute_wam($1, query_prog);
         free_tree($1);
     }
     | regra {
@@ -105,6 +106,7 @@ clausula:
         check_cont($1->left->str_data->nome);
         check_var();
         hash_variable_delete();
+        execute_wam($1, query_prog);
         free_tree($1);
     }
     | error '.' { yyerrok; }
@@ -153,6 +155,7 @@ estrutura:
         if (str_occ > 0){
             char newname[100];
             char occstr[20];
+            newname[0] = '\n';
             strcat(newname, $1);
             strcat(newname, ":");
             sprintf(occstr, "%d", str_occ);

@@ -18,7 +18,7 @@ typedef struct queue {
     struct queue *next;
 } Queue;
 
-void execute_wam(TreeNode *root);
+void execute_wam(TreeNode *root, int query_prog);
 void register_names(TreeNode* root);
 
 void query_token_stream(TreeNode* root);

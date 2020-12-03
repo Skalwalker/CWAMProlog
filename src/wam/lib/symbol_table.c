@@ -43,6 +43,7 @@ int st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
           char newkey[100];
           char newname[100];
           char occstr[20];
+          newname[0] = '\0'; 
           strcat(newname, name);
           strcat(newname, ":");
           sprintf(occstr, "%d", s->occ);

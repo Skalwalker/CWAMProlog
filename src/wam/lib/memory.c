@@ -95,6 +95,20 @@ int heap_insert_head(Node *node){
     return HEAP_CREATE_SUCCESS;
 }
 
+Node* find_in_heap(int index){
+    Node* current = heap->head;
+
+    while (current != NULL){
+        if (current->index == index) {
+            return current;
+        }
+        current = current->next;
+    }
+    printf("O programa falhou em unificar!\n");
+    exit(0); 
+}
+
+
 int print_heap(){
     Node* current = heap->head;
     char temp[4];
@@ -198,7 +212,10 @@ void destroy_node(Node* node) {
     free(node);
 }
 
-int destroy_heap(Heap* heap){
+int destroy_heap(){
+    if (heap == NULL) {
+        return 0;
+    }
 
     while (heap->head != NULL) {
         Node* node = heap_remove_head(heap);

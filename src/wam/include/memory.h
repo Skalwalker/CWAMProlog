@@ -3,6 +3,12 @@
 
 #include "shared.h"
 
+typedef struct pdl_node PDLNode;
+
+typedef struct pdl_node {
+    int address;
+    PDLNode *next, *prev;
+} PDLNode;
 
 typedef struct tag {
     char name[100]; // f
@@ -33,6 +39,7 @@ typedef struct heap {
 extern Heap *heap;
 
 Heap* create_heap();
+Node* find_in_heap(int index);
 Node* create_node(DataType *x, int heap_top);
 int heap_insert_tail(Node *node);
 int heap_insert_head(Node *node);
@@ -41,6 +48,6 @@ int print_heap_reversed();
 Node* heap_remove_head(Heap* heap);
 Node* heap_remove_tail(Heap* heap);
 void destroy_node(Node* node);
-int destroy_heap(Heap* heap);
+int destroy_heap();
 
 #endif

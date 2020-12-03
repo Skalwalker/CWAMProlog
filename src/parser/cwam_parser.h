@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.2.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -31,9 +31,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-   especially those whose name start with YY_ or yy_.  They are
-   private implementation details that can be changed or removed.  */
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED
 # define YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED
@@ -45,29 +44,24 @@
 extern int yydebug;
 #endif
 
-/* Token kinds.  */
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    CON = 258,                     /* CON  */
-    VAR = 259,                     /* VAR  */
-    SINGLE_VAR = 260,              /* SINGLE_VAR  */
-    ANON_VAR = 261,                /* ANON_VAR  */
-    RULE_SYM = 262                 /* RULE_SYM  */
+    CON = 258,
+    VAR = 259,
+    SINGLE_VAR = 260,
+    ANON_VAR = 261,
+    RULE_SYM = 262
   };
-  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 50 "src/parser/prolog_bison.y"
+#line 51 "src/parser/prolog_bison.y"
 
     char con[100];
     char var[100];
@@ -75,7 +69,7 @@ union YYSTYPE
     char avar[100];
     TreeNode *node;
 
-#line 79 "src/parser/cwam_parser.h"
+#line 73 "src/parser/cwam_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -99,6 +93,6 @@ struct YYLTYPE
 
 
 
-int yyparse (void);
+int yyparse (int query_prog, int verbose);
 
 #endif /* !YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED  */
