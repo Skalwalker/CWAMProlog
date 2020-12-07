@@ -11,6 +11,8 @@ void execute_wam(TreeNode *root, int query_prog){
         print_registers();
         query_token_stream(root);
     } else if (query_prog == 1) {
+        reg_counter = 1;
+        table_reg_delete();
         register_names(root);
         print_registers();
         prog_token_stream(root);
@@ -18,7 +20,6 @@ void execute_wam(TreeNode *root, int query_prog){
 }
 
 void map_instruction(TempRegister *reg, int occ, int init, int inst_type) {
-
     if (inst_type == QUERY_INSTR) {
         if (occ == 1){
             printf("set_value X%d\n", reg->num);
@@ -51,6 +52,8 @@ void map_instruction(TempRegister *reg, int occ, int init, int inst_type) {
             }
         }
     }
+
+    // print_heap();
 }
 
 void process_token(TreeNode *node, int init, int inst_type) {

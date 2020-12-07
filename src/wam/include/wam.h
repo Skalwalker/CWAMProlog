@@ -6,6 +6,8 @@
 #include "instruction_set.h"
 #include "memory.h"
 
+extern int reg_counter;
+
 enum INSTRUCTION_TYPE {
     QUERY_INSTR = 41,
     PROG_INSTR = 42

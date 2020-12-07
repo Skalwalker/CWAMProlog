@@ -53,9 +53,13 @@ void get_structure(TempRegister *reg) {
     DataType *new_data;
     Node *str, *functor;
     int addr = deref(reg->data->heap_ref);
-    DataType *data = find_in_heap(addr)->data;
+    printf("Chegou aqui!");
+    Node* found_node = find_in_heap(addr);
+    DataType *data = found_node->data;
+    printf("%d", addr);
 
     if (data->heap_ref == -1) {
+        printf("Chegou aqui 2!");
         // heap[h] <- <Str H+1>
         new_data = create_data(STR_SYMBOL, heap_register+1, NULL);
         str = create_node(new_data, heap_register);
@@ -67,9 +71,10 @@ void get_structure(TempRegister *reg) {
         bind(addr, heap_register);
         heap_register += 2;
         mode = WRITE;
-    } else if (data->data_type == STR_SYMBOL) {
+    } else if (data->data_type == TAG_SYMBOL) {
+        printf("Chegou aqui 3!");
         if (data->tag != NULL) {
-            subterm_register = data->heap_ref + 1;
+            subterm_register = found_node->index + 1;
             mode = READ;
         } else {
             fail = 1;
@@ -77,6 +82,7 @@ void get_structure(TempRegister *reg) {
             exit(0);
         }
     } else {
+        printf("Chegou aqui 4!");
         fail = 1;
         printf("O programa falhou em unificar!\n");
         exit(0);
