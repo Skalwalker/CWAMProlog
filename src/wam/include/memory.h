@@ -5,8 +5,8 @@
 
 
 typedef struct tag {
-    char name[100]; // f
-    int arity; //2
+    char name[100];
+    int arity;
 } Tag;
 
 typedef struct data_type {
@@ -15,8 +15,9 @@ typedef struct data_type {
     Tag* tag;
 } DataType;
 
+
 Tag* create_tag(char *name, int arity);
-DataType* create_data(int type, int heap_ref, Tag* tag);
+DataType *create_data(int type, int heap_ref, Tag* tag);
 
 typedef struct heap_node {
     int index;
@@ -34,13 +35,14 @@ extern Heap *heap;
 
 Heap* create_heap();
 Node* create_node(DataType *x, int heap_top);
+Node *fetch_node(int address);
 int heap_insert_tail(Node *node);
 int heap_insert_head(Node *node);
 int print_heap();
 int print_heap_reversed();
-Node* heap_remove_head(Heap* heap);
-Node* heap_remove_tail(Heap* heap);
+Node* heap_remove_head();
+Node* heap_remove_tail();
 void destroy_node(Node* node);
-int destroy_heap(Heap* heap);
+int destroy_heap();
 
 #endif

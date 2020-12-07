@@ -53,9 +53,31 @@ void set_value(TempRegister *reg) {
 }
 
 /* Get Instructions */
-void get_structure() {
+// void get_structure(TempRegister *reg) {
+//     int addr;
+//     addr = deref(reg->num);
+//     switch (1) { //STORE[addr]
+//         case 1: // <REF, _>
+//             // HEAp[h] <- <STR, H+1>;
+//             // HEAp[h+1] <- f/n;
+//             // bind(addr, H);
+//             heap_register += 2;
+//             mode = WRITE;
+//             break;
+//         case 2: // <STR, a>
+//             if (1) { // heap[a] = f/n
+//                 // subterm_register = a + 1
+//                 mode = READ;
+//             } else {
+//                 fail = 1;
+//             }
+//             break;
 
-}
+//         default:
+//             fail = 1;
+//             break;
+//     }
+// }
 
 void get_variable() {
 
@@ -67,38 +89,56 @@ void get_value(){
 
 /* Unify Instructions */
 void unify_variable(TempRegister *reg){
-    switch (mode) {
-    case WRITE:
-        /* code */
-        break;
-    case READ:
-        /* code */
-        break;
+    Node *token;
 
-    default:
-        break;
+    switch (mode) {
+        case READ:
+            reg->data->heap_ref = subterm_register;
+            break;
+        case WRITE:
+            token = (Node*)malloc(sizeof(Node));
+            // x_i <- heap[h]
+            reg->data->heap_ref = heap_register;
+            token = create_node(reg->data, heap_register);
+            // heap[h] <- <REF H>
+            heap_insert_head(token);
+            heap_register += 1; // h <- h + 1
+            break;
+        default:
+            break;
     }
     subterm_register += 1;
 }
 
 void unify_value(TempRegister *reg) {
-    switch (mode) {
-    case WRITE:
-        /* code */
-        break;
-    case READ:
-        /* code */
-        break;
+    Node *token;
 
-    default:
-        break;
+    switch (mode) {
+        case READ:
+            unify();
+            break;
+        case WRITE:
+            token = (Node*)malloc(sizeof(Node));
+            token = create_node(reg->data, heap_register);
+            heap_insert_head(token); // heap[h] <- Xi
+            heap_register += 1; // h <- h + 1
+            break;
+        default:
+            break;
     }
 
-    subterm_register;
+    subterm_register += 1;
 }
 
-void deref() {
-
+int deref(int address) {
+    DataType *term;
+    // STORE[a]
+    term = fetch_node(address)->data;
+    if ((term->data_type == REF_SYMBOL)&&(term->heap_ref != address)) {
+        return deref(term->heap_ref);
+    } else {
+        return address;
+    }
 }
 
 void unify() {

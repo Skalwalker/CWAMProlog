@@ -10,20 +10,18 @@
 #include <string.h>
 
 extern SymbolTable *s_table;
+extern char file_name[100];
 
-int c_line = 1;
 int c_col = 0;
 int error_count = 0;
-int error_line = 0;
 int error_col = 0;
-char file_name[100];
 char error[200];
 
 void yyerror (char const *);
 
 void check_error(){
         if (error_count > 0){
-                printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, error_line, error_col, error);
+                printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, yylineno, error_col, error);
         }
         error_count = 0;
 }
@@ -39,22 +37,21 @@ VAR [A-Z][A-Za-z0-9]*(_[A-Za-z0-9]+)*
 SINGLE_VAR "_"+[A-Za-z0-9]*(_[A-Za-z0-9]+)*
 ANON_VAR "_"
 
-
 %%
 
-\n {check_error(); c_col = 0; c_line++;}
+\n {check_error(); c_col = 0;}
 
-{INT} {check_error(); c_col += yyleng;  strcpy(yylval->con, yytext); return CON;}
+{INT} {check_error(); c_col += yyleng;  strcpy(yylval->term, yytext); return CON;}
 
-{FLOAT}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
+{FLOAT}  {check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return CON;}
 
-{CONSTANTE}  {check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
+{CONSTANTE}  {check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return CON;}
 
-{VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return VAR;}
+{VAR} {check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return VAR;}
 
-{ANON_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return ANON_VAR;}
+{ANON_VAR} {check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return ANON_VAR;}
 
-{SINGLE_VAR} {check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return SINGLE_VAR;}
+{SINGLE_VAR} {check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return SINGLE_VAR;}
 
 
 "(" {check_error(); c_col += 1; return '(';}
@@ -75,16 +72,6 @@ ANON_VAR "_"
 
 "/*"[^/]*"*/"  {
                         check_error();
-                        #ifdef __APPLE__
-                                unsigned int i;
-                        #else
-                                int i;
-                        #endif
-                        for (i=0; i < yyleng; i++){
-                                if (strncmp(&yytext[i], "\n", 1  ) == 0) {
-                                        c_line += 1;
-                                }
-                        }
                         c_col = 0;
                 }
 
@@ -96,7 +83,6 @@ ANON_VAR "_"
         c_col += 1;
         if (error_count == 0){
                 error_col = c_col;
-                error_line = c_line;
         }
         error[error_count] = yytext[0];
         error_count += 1;

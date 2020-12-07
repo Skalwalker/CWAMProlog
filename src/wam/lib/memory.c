@@ -26,6 +26,22 @@ Node* create_node(DataType *x, int heap_top){
     return newNode;
 }
 
+Node *fetch_node(int address) {
+    Node* current = heap->head;
+
+    if (current == NULL) {
+        printf("Empty Heap\n");
+        return NULL;
+    }
+
+    while (current != NULL) {
+        if (current->index==address){
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 Tag* create_tag(char *name, int arity){
     Tag *new_tag = (Tag*)malloc(sizeof(Tag));
@@ -146,7 +162,7 @@ int print_heap_reversed() {
     return HEAP_PRINT_SUCCESS;
 }
 
-Node* heap_remove_head(Heap* heap){
+Node* heap_remove_head(){
 
     if (heap == NULL) {
         return NULL;
@@ -170,7 +186,7 @@ Node* heap_remove_head(Heap* heap){
     return removing;
 }
 
-Node* heap_remove_tail(Heap* heap){
+Node* heap_remove_tail(){
 
     if (heap == NULL) {
         return NULL;
@@ -198,10 +214,10 @@ void destroy_node(Node* node) {
     free(node);
 }
 
-int destroy_heap(Heap* heap){
+int destroy_heap(){
 
     while (heap->head != NULL) {
-        Node* node = heap_remove_head(heap);
+        Node* node = heap_remove_head();
         free(node);
     }
 

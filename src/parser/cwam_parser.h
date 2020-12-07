@@ -67,15 +67,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 50 "src/parser/prolog_bison.y"
+#line 51 "src/parser/prolog_bison.y"
 
-    char con[100];
-    char var[100];
-    char svar[100];
-    char avar[100];
+    char term[100];
     TreeNode *node;
 
-#line 79 "src/parser/cwam_parser.h"
+#line 76 "src/parser/cwam_parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

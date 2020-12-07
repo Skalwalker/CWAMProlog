@@ -4,19 +4,23 @@
 %define api.pure
 
 %{
-
     #include "arvore.h"
     #include "../wam/include/main.h"
 
     extern char file_name[];
     extern int yylineno;
     extern int error_col;
+    extern void yyerror (char const *s);
+    extern int yyparse(void);
+    extern int yylex();
 
-    int reg_input = 1;
     int arity = 0;
     int error_last = 0;
     char last[100];
+    void print_clause(TreeNode *n, char *type);
+    void check_syntax(TreeNode *n);
 
+    /* ==== Funcoes e Estruturas auxiliares a semantica ===== */
     void check_var();
     void check_cont(char new_str[]);
 
@@ -39,26 +43,20 @@
     VarTable *var_table = NULL;
     void hash_add_variable(char *name, int var_type, int occurrances);
     void hash_variable_delete();
-
-    int yyparse(void);
-	void yyerror (char const *s);
-    int yylex();
+    /* ====================================================== */
 %}
 
 %locations
 
 %union {
-    char con[100];
-    char var[100];
-    char svar[100];
-    char avar[100];
+    char term[100];
     TreeNode *node;
 }
 
-%token <con> CON
-%token <var> VAR
-%token <svar> SINGLE_VAR
-%token <avar> ANON_VAR
+%token <term> CON
+%token <term> VAR
+%token <term> SINGLE_VAR
+%token <term> ANON_VAR
 %token RULE_SYM
 
 %type <node> list
@@ -69,7 +67,11 @@
 %type <node> termo
 %type <node> argumentos
 
-%destructor { free_tree($$); } <node>
+%destructor {
+    free_tree($$);
+    hash_structure_delete();
+    hash_variable_delete();
+} <node>
 
 %start programa
 
@@ -89,22 +91,13 @@ predicado:
 
 clausula:
     fato {
-        print_header("Fato");
-        print_tree($1, 0);
-        print_footer();
-        check_cont($1->left->str_data->nome);
-        check_var();
-        hash_variable_delete();
-        execute_wam($1);
+        print_clause($1, "Fato");
+        check_syntax($1);
         free_tree($1);
     }
     | regra {
-        print_header("Regra");
-        print_tree($1, 0);
-        print_footer();
-        check_cont($1->left->str_data->nome);
-        check_var();
-        hash_variable_delete();
+        print_clause($1, "Regra");
+        check_syntax($1);
         free_tree($1);
     }
     | error '.' { yyerrok; }
@@ -153,6 +146,7 @@ estrutura:
         if (str_occ > 0){
             char newname[100];
             char occstr[20];
+            newname[0] = '\0';
             strcat(newname, $1);
             strcat(newname, ":");
             sprintf(occstr, "%d", str_occ);
@@ -193,12 +187,10 @@ termo:
         hash_add_variable($1, SINGLETON_VAR, 1);
         $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         st_add_symbol(REF_SYMBOL, $1, 0, yylineno, SINGLETON_VAR);
-        reg_input += 1;
     }
     | ANON_VAR  {
         TermData *term = new_term($1, REF_SYMBOL, ANONYM_VAR);
         $$ = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
-        reg_input += 1;
     }
     | list {
         $$ = new_tree_node($1, NULL, NODE_TERM, NULL, NULL);
@@ -218,6 +210,18 @@ list:
 ;
 
 %%
+
+void print_clause(TreeNode *n, char *type){
+    print_header(type);
+    print_tree(n, 0);
+    print_footer();
+}
+
+void check_syntax(TreeNode *n) {
+    check_cont(n->left->str_data->nome);
+    check_var();
+    hash_variable_delete();
+}
 
 void hash_add_variable(char *name, int var_type, int occurrances) {
 

@@ -92,8 +92,6 @@ void print_tree(TreeNode *root, int tabs) {
                 } else {
                     printf("<termo> %s (tipo: %s)\n", term_nd->nome, type);
                 }
-            } else {
-                printf("<termo>\n");
             }
             break;
         case NODE_STR:
@@ -105,10 +103,8 @@ void print_tree(TreeNode *root, int tabs) {
             }
             break;
         case NODE_STRS:
-            printf("<estruturas>\n");
             break;
         case NODE_ARGS:
-            printf("<argumentos>\n");
             break;
         case NODE_LIS:
             printf("<lista>\n");

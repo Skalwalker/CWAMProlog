@@ -509,24 +509,22 @@ char *yytext;
 #include <string.h>
 
 extern SymbolTable *s_table;
+extern char file_name[100];
 
-int c_line = 1;
 int c_col = 0;
 int error_count = 0;
-int error_line = 0;
 int error_col = 0;
-char file_name[100];
 char error[200];
 
 void yyerror (char const *);
 
 void check_error(){
         if (error_count > 0){
-                printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, error_line, error_col, error);
+                printf("\nERROR: %s:%d:%d: Lexical error: Unrecognized Token Found: %s\n", file_name, yylineno, error_col, error);
         }
         error_count = 0;
 }
-#line 530 "src/lexical/cwam_lex.yy.c"
+#line 528 "src/lexical/cwam_lex.yy.c"
 
 #define INITIAL 0
 
@@ -714,10 +712,10 @@ YY_DECL
     
         YYSTYPE * yylval;
     
-#line 43 "src/lexical/prolog_lex.l"
+#line 40 "src/lexical/prolog_lex.l"
 
 
-#line 721 "src/lexical/cwam_lex.yy.c"
+#line 719 "src/lexical/cwam_lex.yy.c"
 
     yylval = yylval_param;
 
@@ -815,116 +813,105 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 45 "src/lexical/prolog_lex.l"
-{check_error(); c_col = 0; c_line++;}
+#line 42 "src/lexical/prolog_lex.l"
+{check_error(); c_col = 0;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 47 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng;  strcpy(yylval->con, yytext); return CON;}
+#line 44 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng;  strcpy(yylval->term, yytext); return CON;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 49 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
+#line 46 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return CON;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 51 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->con, yytext); return CON;}
+#line 48 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return CON;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 53 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return VAR;}
+#line 50 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return VAR;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 55 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return ANON_VAR;}
+#line 52 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return ANON_VAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 57 "src/lexical/prolog_lex.l"
-{check_error(); c_col += yyleng; strcpy(yylval->var, yytext); return SINGLE_VAR;}
+#line 54 "src/lexical/prolog_lex.l"
+{check_error(); c_col += yyleng; strcpy(yylval->term, yytext); return SINGLE_VAR;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 60 "src/lexical/prolog_lex.l"
+#line 57 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '(';}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "src/lexical/prolog_lex.l"
+#line 59 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ')';}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 64 "src/lexical/prolog_lex.l"
+#line 61 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '.';}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 66 "src/lexical/prolog_lex.l"
+#line 63 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '|';}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 68 "src/lexical/prolog_lex.l"
+#line 65 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ',';}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 70 "src/lexical/prolog_lex.l"
+#line 67 "src/lexical/prolog_lex.l"
 {  check_error(); c_col += 2; return RULE_SYM; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 72 "src/lexical/prolog_lex.l"
+#line 69 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return '[';}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 74 "src/lexical/prolog_lex.l"
+#line 71 "src/lexical/prolog_lex.l"
 {check_error(); c_col += 1; return ']';}
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 76 "src/lexical/prolog_lex.l"
+#line 73 "src/lexical/prolog_lex.l"
 {
                         check_error();
-                        #ifdef __APPLE__
-                                unsigned int i;
-                        #else
-                                int i;
-                        #endif
-                        for (i=0; i < yyleng; i++){
-                                if (strncmp(&yytext[i], "\n", 1  ) == 0) {
-                                        c_line += 1;
-                                }
-                        }
                         c_col = 0;
                 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 91 "src/lexical/prolog_lex.l"
+#line 78 "src/lexical/prolog_lex.l"
 { check_error(); c_col=0;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 93 "src/lexical/prolog_lex.l"
+#line 80 "src/lexical/prolog_lex.l"
 {check_error(); c_col += yyleng;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 95 "src/lexical/prolog_lex.l"
+#line 82 "src/lexical/prolog_lex.l"
 {
         c_col += 1;
         if (error_count == 0){
                 error_col = c_col;
-                error_line = c_line;
         }
         error[error_count] = yytext[0];
         error_count += 1;
@@ -932,10 +919,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 105 "src/lexical/prolog_lex.l"
+#line 91 "src/lexical/prolog_lex.l"
 ECHO;
 	YY_BREAK
-#line 939 "src/lexical/cwam_lex.yy.c"
+#line 926 "src/lexical/cwam_lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1903,7 +1890,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 105 "src/lexical/prolog_lex.l"
+#line 91 "src/lexical/prolog_lex.l"
 
 
 

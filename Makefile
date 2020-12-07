@@ -11,7 +11,7 @@ endif
 
 IDIR=src/wam/include
 CC=gcc
-CFLAGS= -std=gnu11 -Wall -Wextra -pedantic -g
+CFLAGS= -std=gnu11 -Wall -Wextra -Wshadow -Wunused -Wunused-function -pedantic -g
 
 ODIR=obj
 LDIR=src/wam/lib

@@ -15,21 +15,24 @@ extern int subterm_register;
 extern Heap *heap;
 
 /* Put Instructions */
-void put_structure();
+void put_structure(TempRegister *reg);
 void put_variable();
 void put_value();
 
 /* Set Instructions */
-void set_variable();
-void set_value();
+void set_variable(TempRegister *reg);
+void set_value(TempRegister *reg);
 
 /* Get Instructions */
-void get_structure();
+void get_structure(TempRegister *reg);
 void get_variable();
 void get_value();
 
 /* Unify Instructions */
-void unify_variable();
-void unify_value();
+void unify_variable(TempRegister *reg);
+void unify_value(TempRegister *reg);
+
+int deref(int address);
+void unify();
 
 #endif
