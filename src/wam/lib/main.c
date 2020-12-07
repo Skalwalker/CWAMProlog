@@ -2,10 +2,41 @@
 
 extern FILE *yyin;
 extern int yylex_destroy();
+extern int yy_scan_string();
 
 char file_name[100];
 
 SymbolTable *s_table = NULL;
+
+
+void load_program(){
+    print_heap();
+    FILE* fp;
+    fp = fopen(file_name, "r");
+    yyin = fp;
+    yyparse(1, 0);
+    fclose(fp);
+    yylex_destroy();
+}
+
+void load_query(char *query){
+    yy_scan_string(query);
+    yyparse(0, 0);
+    print_heap();
+    yylex_destroy();
+}
+
+void process_query(){
+    char query[500];
+    printf("?- ");
+    while (1) {
+        scanf("%[^\n]s", query);
+        getchar();
+        load_query(query);
+        load_program();
+        printf("\n?- ");
+    }
+}
 
 int main(int argc, char **argv){
     FILE* fp;
@@ -19,10 +50,15 @@ int main(int argc, char **argv){
 		return 0;
     }
 
-    yyparse();
+    yyparse(-1, 0);
     yylex_destroy();
     fclose(fp);
     st_print();
     st_delete();
+
+    printf("\n\n\n");
+
+    process_query();
+
 	return 0;
 }

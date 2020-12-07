@@ -1,6 +1,6 @@
-%option noinput nounput
 %option noyywrap
 %option bison-bridge
+%option noinput nounput
 
 %{
 #include "../wam/include/main.h"
@@ -90,7 +90,7 @@ ANON_VAR "_"
 
 %%
 
-void yyerror (char const *s) {
+void yyerror ( char const *s) {
     printf("ERROR: %s:%d:%d:", file_name, yylineno, error_col);
 	printf("%s", s);
 }

@@ -1,5 +1,6 @@
 %debug
 %defines
+%parse-param {int query_prog} {int verbose}
 %define parse.error verbose
 %define api.pure
 
@@ -10,8 +11,6 @@
     extern char file_name[];
     extern int yylineno;
     extern int error_col;
-    extern void yyerror (char const *s);
-    extern int yyparse(void);
     extern int yylex();
 
     int arity = 0;
@@ -43,7 +42,10 @@
     VarTable *var_table = NULL;
     void hash_add_variable(char *name, int var_type, int occurrances);
     void hash_variable_delete();
-    /* ====================================================== */
+
+    int yyparse(int query_prog, int verbose);
+	void yyerror(YYLTYPE *llocp, int query_prog, int verbose, char const *s);
+    int yylex();
 %}
 
 %locations
@@ -93,11 +95,13 @@ clausula:
     fato {
         print_clause($1, "Fato");
         check_syntax($1);
+        execute_wam($1, query_prog);
         free_tree($1);
     }
     | regra {
         print_clause($1, "Regra");
         check_syntax($1);
+        execute_wam($1, query_prog);
         free_tree($1);
     }
     | error '.' { yyerrok; }

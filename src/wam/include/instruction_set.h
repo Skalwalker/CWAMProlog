@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "registers.h"
 #include "wam.h"
+#include "utstack.h"
 
 enum MODES {
     WRITE = 0,
@@ -13,6 +14,7 @@ enum MODES {
 extern int heap_register;
 extern int subterm_register;
 extern Heap *heap;
+extern PDLNode *pdl;
 
 /* Put Instructions */
 void put_structure(TempRegister *reg);
@@ -34,5 +36,9 @@ void unify_value(TempRegister *reg);
 
 int deref(int address);
 void unify();
+
+void unify(int addr1, int addr2);
+int deref(int address);
+void bind(int addr1, int addr2);
 
 #endif

@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 6 "src/parser/prolog_bison.y"
+#line 7 "src/parser/prolog_bison.y"
 
     #include "arvore.h"
     #include "../wam/include/main.h"
@@ -75,8 +75,6 @@
     extern char file_name[];
     extern int yylineno;
     extern int error_col;
-    extern void yyerror (char const *s);
-    extern int yyparse(void);
     extern int yylex();
 
     int arity = 0;
@@ -108,9 +106,12 @@
     VarTable *var_table = NULL;
     void hash_add_variable(char *name, int var_type, int occurrances);
     void hash_variable_delete();
-    /* ====================================================== */
 
-#line 114 "src/parser/cwam_parser.c"
+    int yyparse(int query_prog, int verbose);
+	void yyerror(YYLTYPE *llocp, int query_prog, int verbose, char const *s);
+    int yylex();
+
+#line 115 "src/parser/cwam_parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -535,9 +536,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    81,    81,    88,    89,    93,    98,   103,   107,   113,
-     119,   122,   128,   138,   165,   169,   176,   179,   185,   191,
-     195,   201,   204,   207
+       0,    83,    83,    90,    91,    95,   101,   107,   111,   117,
+     123,   126,   132,   142,   169,   173,   180,   183,   189,   195,
+     199,   205,   208,   211
 };
 #endif
 
@@ -693,7 +694,7 @@ enum { YYENOMEM = -2 };
       }                                                           \
     else                                                          \
       {                                                           \
-        yyerror (YY_("syntax error: cannot back up")); \
+        yyerror (&yylloc, query_prog, verbose, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
   while (0)
@@ -794,7 +795,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Kind, Value, Location); \
+                  Kind, Value, Location, query_prog, verbose); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -806,11 +807,13 @@ do {                                                                      \
 
 static void
 yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, int query_prog, int verbose)
 {
   FILE *yyoutput = yyo;
   YYUSE (yyoutput);
   YYUSE (yylocationp);
+  YYUSE (query_prog);
+  YYUSE (verbose);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -829,14 +832,14 @@ yy_symbol_value_print (FILE *yyo,
 
 static void
 yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, int query_prog, int verbose)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
   YY_LOCATION_PRINT (yyo, *yylocationp);
   YYFPRINTF (yyo, ": ");
-  yy_symbol_value_print (yyo, yykind, yyvaluep, yylocationp);
+  yy_symbol_value_print (yyo, yykind, yyvaluep, yylocationp, query_prog, verbose);
   YYFPRINTF (yyo, ")");
 }
 
@@ -870,7 +873,7 @@ do {                                                            \
 
 static void
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
-                 int yyrule)
+                 int yyrule, int query_prog, int verbose)
 {
   int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -884,7 +887,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
       yy_symbol_print (stderr,
                        YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
                        &yyvsp[(yyi + 1) - (yynrhs)],
-                       &(yylsp[(yyi + 1) - (yynrhs)]));
+                       &(yylsp[(yyi + 1) - (yynrhs)]), query_prog, verbose);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -892,7 +895,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, YYLTYPE *yylsp,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, yylsp, Rule); \
+    yy_reduce_print (yyssp, yyvsp, yylsp, Rule, query_prog, verbose); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1201,10 +1204,12 @@ yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
 
 static void
 yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, YYLTYPE *yylocationp)
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, int query_prog, int verbose)
 {
   YYUSE (yyvaluep);
   YYUSE (yylocationp);
+  YYUSE (query_prog);
+  YYUSE (verbose);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
@@ -1213,73 +1218,73 @@ yydestruct (const char *yymsg,
   switch (yykind)
     {
     case YYSYMBOL_fato: /* fato  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1223 "src/parser/cwam_parser.c"
+#line 1228 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_regra: /* regra  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1233 "src/parser/cwam_parser.c"
+#line 1238 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estruturas: /* estruturas  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1243 "src/parser/cwam_parser.c"
+#line 1248 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_estrutura: /* estrutura  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1253 "src/parser/cwam_parser.c"
+#line 1258 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_argumentos: /* argumentos  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1263 "src/parser/cwam_parser.c"
+#line 1268 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_termo: /* termo  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1273 "src/parser/cwam_parser.c"
+#line 1278 "src/parser/cwam_parser.c"
         break;
 
     case YYSYMBOL_list: /* list  */
-#line 70 "src/parser/prolog_bison.y"
+#line 72 "src/parser/prolog_bison.y"
             {
     free_tree(((*yyvaluep).node));
     hash_structure_delete();
     hash_variable_delete();
 }
-#line 1283 "src/parser/cwam_parser.c"
+#line 1288 "src/parser/cwam_parser.c"
         break;
 
       default:
@@ -1298,7 +1303,7 @@ yydestruct (const char *yymsg,
 `----------*/
 
 int
-yyparse (void)
+yyparse (int query_prog, int verbose)
 {
 /* Lookahead token kind.  */
 int yychar;
@@ -1581,74 +1586,76 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: predicado  */
-#line 81 "src/parser/prolog_bison.y"
+#line 83 "src/parser/prolog_bison.y"
               {
         hash_structure_delete();
         hash_variable_delete();
     }
-#line 1590 "src/parser/cwam_parser.c"
+#line 1595 "src/parser/cwam_parser.c"
     break;
 
   case 5: /* clausula: fato  */
-#line 93 "src/parser/prolog_bison.y"
+#line 95 "src/parser/prolog_bison.y"
          {
         print_clause((yyvsp[0].node), "Fato");
         check_syntax((yyvsp[0].node));
+        execute_wam((yyvsp[0].node), query_prog);
         free_tree((yyvsp[0].node));
     }
-#line 1600 "src/parser/cwam_parser.c"
+#line 1606 "src/parser/cwam_parser.c"
     break;
 
   case 6: /* clausula: regra  */
-#line 98 "src/parser/prolog_bison.y"
+#line 101 "src/parser/prolog_bison.y"
             {
         print_clause((yyvsp[0].node), "Regra");
         check_syntax((yyvsp[0].node));
+        execute_wam((yyvsp[0].node), query_prog);
         free_tree((yyvsp[0].node));
     }
-#line 1610 "src/parser/cwam_parser.c"
+#line 1617 "src/parser/cwam_parser.c"
     break;
 
   case 7: /* clausula: error '.'  */
-#line 103 "src/parser/prolog_bison.y"
+#line 107 "src/parser/prolog_bison.y"
                 { yyerrok; }
-#line 1616 "src/parser/cwam_parser.c"
+#line 1623 "src/parser/cwam_parser.c"
     break;
 
   case 8: /* fato: estrutura '.'  */
-#line 107 "src/parser/prolog_bison.y"
+#line 111 "src/parser/prolog_bison.y"
                   {
         (yyval.node) = new_tree_node((yyvsp[-1].node), NULL, NODE_FACT, NULL, NULL);
     }
-#line 1624 "src/parser/cwam_parser.c"
+#line 1631 "src/parser/cwam_parser.c"
     break;
 
   case 9: /* regra: estrutura RULE_SYM estruturas '.'  */
-#line 113 "src/parser/prolog_bison.y"
+#line 117 "src/parser/prolog_bison.y"
                                       {
         (yyval.node) = new_tree_node((yyvsp[-3].node), (yyvsp[-1].node), NODE_RULE, NULL, NULL);
     }
-#line 1632 "src/parser/cwam_parser.c"
+#line 1639 "src/parser/cwam_parser.c"
     break;
 
   case 10: /* estruturas: estrutura  */
-#line 119 "src/parser/prolog_bison.y"
+#line 123 "src/parser/prolog_bison.y"
               {
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_STRS, NULL, NULL);
     }
-#line 1640 "src/parser/cwam_parser.c"
+#line 1647 "src/parser/cwam_parser.c"
     break;
 
   case 11: /* estruturas: estrutura ',' estruturas  */
-#line 122 "src/parser/prolog_bison.y"
+#line 126 "src/parser/prolog_bison.y"
                                {
         (yyval.node) = new_tree_node((yyvsp[-2].node), (yyvsp[0].node), NODE_STRS, NULL, NULL);
     }
-#line 1648 "src/parser/cwam_parser.c"
+#line 1655 "src/parser/cwam_parser.c"
     break;
 
   case 12: /* estrutura: CON  */
-#line 128 "src/parser/prolog_bison.y"
+#line 132 "src/parser/prolog_bison.y"
         {
         strcat((yyvsp[0].term), "/");
         char temp[100];
@@ -1659,11 +1666,11 @@ yyreduce:
         st_add_symbol(CON_SYMBOL, (yyvsp[0].term), 0, yylineno, 0);
         arity = 0;
     }
-#line 1663 "src/parser/cwam_parser.c"
+#line 1670 "src/parser/cwam_parser.c"
     break;
 
   case 13: /* estrutura: CON '(' argumentos ')'  */
-#line 138 "src/parser/prolog_bison.y"
+#line 142 "src/parser/prolog_bison.y"
                              {
         StrData *str;
         int str_occ;
@@ -1688,100 +1695,100 @@ yyreduce:
         (yyval.node) = new_tree_node((yyvsp[-1].node), NULL, NODE_STR, NULL, str);
         arity = 0;
     }
-#line 1692 "src/parser/cwam_parser.c"
+#line 1699 "src/parser/cwam_parser.c"
     break;
 
   case 14: /* argumentos: termo  */
-#line 165 "src/parser/prolog_bison.y"
+#line 169 "src/parser/prolog_bison.y"
           {
         arity += 1;
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_ARGS, NULL, NULL);
     }
-#line 1701 "src/parser/cwam_parser.c"
+#line 1708 "src/parser/cwam_parser.c"
     break;
 
   case 15: /* argumentos: termo ',' argumentos  */
-#line 169 "src/parser/prolog_bison.y"
+#line 173 "src/parser/prolog_bison.y"
                            {
         arity += 1;
         (yyval.node) = new_tree_node((yyvsp[-2].node), (yyvsp[0].node), NODE_ARGS, NULL, NULL);
     }
-#line 1710 "src/parser/cwam_parser.c"
+#line 1717 "src/parser/cwam_parser.c"
     break;
 
   case 16: /* termo: estrutura  */
-#line 176 "src/parser/prolog_bison.y"
+#line 180 "src/parser/prolog_bison.y"
               {
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_TERM, NULL, NULL);
     }
-#line 1718 "src/parser/cwam_parser.c"
+#line 1725 "src/parser/cwam_parser.c"
     break;
 
   case 17: /* termo: VAR  */
-#line 179 "src/parser/prolog_bison.y"
+#line 183 "src/parser/prolog_bison.y"
           {
         TermData *term = new_term((yyvsp[0].term), REF_SYMBOL, BASIC_VAR);
         hash_add_variable((yyvsp[0].term), BASIC_VAR, 1);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         st_add_symbol(REF_SYMBOL, (yyvsp[0].term), 0, yylineno, BASIC_VAR);
     }
-#line 1729 "src/parser/cwam_parser.c"
+#line 1736 "src/parser/cwam_parser.c"
     break;
 
   case 18: /* termo: SINGLE_VAR  */
-#line 185 "src/parser/prolog_bison.y"
+#line 189 "src/parser/prolog_bison.y"
                  {
         TermData *term = new_term((yyvsp[0].term), REF_SYMBOL, SINGLETON_VAR);
         hash_add_variable((yyvsp[0].term), SINGLETON_VAR, 1);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
         st_add_symbol(REF_SYMBOL, (yyvsp[0].term), 0, yylineno, SINGLETON_VAR);
     }
-#line 1740 "src/parser/cwam_parser.c"
+#line 1747 "src/parser/cwam_parser.c"
     break;
 
   case 19: /* termo: ANON_VAR  */
-#line 191 "src/parser/prolog_bison.y"
+#line 195 "src/parser/prolog_bison.y"
                 {
         TermData *term = new_term((yyvsp[0].term), REF_SYMBOL, ANONYM_VAR);
         (yyval.node) = new_tree_node(NULL, NULL, NODE_TERM, term, NULL);
     }
-#line 1749 "src/parser/cwam_parser.c"
+#line 1756 "src/parser/cwam_parser.c"
     break;
 
   case 20: /* termo: list  */
-#line 195 "src/parser/prolog_bison.y"
+#line 199 "src/parser/prolog_bison.y"
            {
         (yyval.node) = new_tree_node((yyvsp[0].node), NULL, NODE_TERM, NULL, NULL);
     }
-#line 1757 "src/parser/cwam_parser.c"
+#line 1764 "src/parser/cwam_parser.c"
     break;
 
   case 21: /* list: '[' ']'  */
-#line 201 "src/parser/prolog_bison.y"
+#line 205 "src/parser/prolog_bison.y"
             {
         (yyval.node) = new_tree_node(NULL, NULL, NODE_LIS, NULL, NULL);
     }
-#line 1765 "src/parser/cwam_parser.c"
+#line 1772 "src/parser/cwam_parser.c"
     break;
 
   case 22: /* list: '[' termo ']'  */
-#line 204 "src/parser/prolog_bison.y"
+#line 208 "src/parser/prolog_bison.y"
                     {
         (yyval.node) = new_tree_node((yyvsp[-1].node), NULL, NODE_LIS, NULL, NULL);
     }
-#line 1773 "src/parser/cwam_parser.c"
+#line 1780 "src/parser/cwam_parser.c"
     break;
 
   case 23: /* list: '[' termo '|' termo ']'  */
-#line 207 "src/parser/prolog_bison.y"
+#line 211 "src/parser/prolog_bison.y"
                               {
         (yyval.node) = new_tree_node((yyvsp[-3].node), (yyvsp[-1].node), NODE_LIS, NULL, NULL);
     }
-#line 1781 "src/parser/cwam_parser.c"
+#line 1788 "src/parser/cwam_parser.c"
     break;
 
 
-#line 1785 "src/parser/cwam_parser.c"
+#line 1792 "src/parser/cwam_parser.c"
 
       default: break;
     }
@@ -1856,7 +1863,7 @@ yyerrlab:
                 yysyntax_error_status = YYENOMEM;
               }
           }
-        yyerror (yymsgp);
+        yyerror (&yylloc, query_prog, verbose, yymsgp);
         if (yysyntax_error_status == YYENOMEM)
           goto yyexhaustedlab;
       }
@@ -1877,7 +1884,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, &yylloc);
+                      yytoken, &yylval, &yylloc, query_prog, verbose);
           yychar = YYEMPTY;
         }
     }
@@ -1932,7 +1939,7 @@ yyerrlab1:
 
       yyerror_range[1] = *yylsp;
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp, yylsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp, yylsp, query_prog, verbose);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1974,7 +1981,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (YY_("memory exhausted"));
+  yyerror (&yylloc, query_prog, verbose, YY_("memory exhausted"));
   yyresult = 2;
   goto yyreturn;
 #endif
@@ -1990,7 +1997,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, &yylloc);
+                  yytoken, &yylval, &yylloc, query_prog, verbose);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1999,7 +2006,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, yylsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, yylsp, query_prog, verbose);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -2011,7 +2018,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 212 "src/parser/prolog_bison.y"
+#line 216 "src/parser/prolog_bison.y"
 
 
 void print_clause(TreeNode *n, char *type){

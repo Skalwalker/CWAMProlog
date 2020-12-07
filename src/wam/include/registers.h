@@ -28,6 +28,7 @@ typedef struct reg_stream {
 RegTable *table_reg_lookup(char *nome);
 int table_add_reg(char *name, DataType *data);
 TempRegister* create_register(int num, DataType *data);
+void table_reg_delete();
 
 void print_registers();
 void print_stream();

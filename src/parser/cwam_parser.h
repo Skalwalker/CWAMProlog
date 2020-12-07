@@ -67,7 +67,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 51 "src/parser/prolog_bison.y"
+#line 53 "src/parser/prolog_bison.y"
 
     char term[100];
     TreeNode *node;
@@ -96,6 +96,6 @@ struct YYLTYPE
 
 
 
-int yyparse (void);
+int yyparse (int query_prog, int verbose);
 
 #endif /* !YY_YY_SRC_PARSER_CWAM_PARSER_H_INCLUDED  */

@@ -1894,7 +1894,7 @@ void yyfree (void * ptr )
 
 
 
-void yyerror (char const *s) {
+void yyerror ( char const *s) {
     printf("ERROR: %s:%d:%d:", file_name, yylineno, error_col);
 	printf("%s", s);
 }

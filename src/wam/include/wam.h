@@ -6,6 +6,8 @@
 #include "instruction_set.h"
 #include "memory.h"
 
+extern int reg_counter;
+
 enum INSTRUCTION_TYPE {
     QUERY_INSTR = 41,
     PROG_INSTR = 42
@@ -18,7 +20,7 @@ typedef struct queue {
     struct queue *next;
 } Queue;
 
-void execute_wam(TreeNode *root);
+void execute_wam(TreeNode *root, int query_prog);
 void register_names(TreeNode* root);
 
 void query_token_stream(TreeNode* root);
