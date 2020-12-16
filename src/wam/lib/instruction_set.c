@@ -4,20 +4,18 @@ int mode;
 int fail = 0;
 
 /* Put Instructions */
-void put_structure(TempRegister *reg) {
-    Node *token, *functor;
-    DataType *data;
-    // heap[h] <- <Str H+1>
-    data = reg->data;
-    // x_i <- heap[h]
-    data->heap_ref = heap_register + 1;
-    token = create_node(data, heap_register);
-    heap_insert_head(token);
-    // heap[h] <- nome/aridade
-    data = create_data(TAG_SYMBOL, -2, reg->data->tag);
-    functor = create_node(data, heap_register+1);
-    heap_insert_head(functor);
-
+void put_structure(StrData *str, int reg_num) {
+    // HEAP[H] = <STR, H+1>
+    DataType *data = create_data(STR_SYMBOL, heap_register+1, NULL);
+    Node *cell = create_node(data, heap_register);
+    heap_insert_head(cell);
+    // HEAP[H+1] = f/n
+    DataType *data_tag = create_data(TAG_SYMBOL, -2, create_tag(str->nome, str->arity));
+    cell = create_node(data_tag, heap_register+1);
+    heap_insert_head(cell);
+    // Xi = HEAP[H]
+    create_register(reg_num, data);
+    // H = H + 2
     heap_register += 2;
 }
 
@@ -30,49 +28,49 @@ void put_value() {
 }
 
 /* Set Instructions */
-void set_variable(TempRegister *reg) {
-    Node *token;
-    // x_i <- heap[h]
-    reg->data->heap_ref = heap_register;
-    token = create_node(reg->data, heap_register);
-    // heap[h] <- <REF H>
-    heap_insert_head(token);
+void set_variable(int reg_num) {
+    // HEAP[H] = <REF, H>
+    DataType *data = create_data(REF_SYMBOL, heap_register, NULL);
+    Node *cell = create_node(data, heap_register);
+    heap_insert_head(cell);
+    // Xi = HEAP[H]
+    create_register(reg_num, data);
+    // H = H + 1
     heap_register += 1;
 }
 
-void set_value(TempRegister *reg) {
-    Node *token;
-    token = (Node*)malloc(sizeof(Node));
-    token = create_node(reg->data, heap_register);
-    heap_insert_head(token); // heap[h] <- Xi
+void set_value(int reg_num) {
+    // HEAP[H] = Xi
+    XRegister *reg = find_register(reg_num);
+    DataType *new_data = create_data(reg->data->data_type, reg->data->heap_ref, NULL);
+    Node *cell = create_node(new_data, heap_register);
+    heap_insert_head(cell);
+    // H = H + 1
     heap_register += 1;
 }
 
 /* Get Instructions */
-void get_structure(TempRegister *reg) {
+void get_structure(StrData *tag, int reg_num) {
     DataType *new_data;
     Node *str, *functor;
+    XRegister *reg = find_register(reg_num);
     int addr = deref(reg->data->heap_ref);
-    printf("Chegou aqui!");
     Node* found_node = find_in_heap(addr);
     DataType *data = found_node->data;
-    printf("%d", addr);
 
-    if (data->heap_ref == -1) {
-        printf("Chegou aqui 2!");
+    if (data->heap_ref == found_node->index) {
         // heap[h] <- <Str H+1>
         new_data = create_data(STR_SYMBOL, heap_register+1, NULL);
         str = create_node(new_data, heap_register);
         heap_insert_head(str);
         // heap[h] <- f/n
-        new_data = create_data(TAG_SYMBOL, -2, reg->data->tag);
+        new_data = create_data(TAG_SYMBOL, -2, create_tag(tag->nome, tag->arity));
         functor = create_node(new_data, heap_register+1);
         heap_insert_head(functor);
         bind(addr, heap_register);
         heap_register += 2;
         mode = WRITE;
     } else if (data->data_type == TAG_SYMBOL) {
-        printf("Chegou aqui 3!");
         if (data->tag != NULL) {
             subterm_register = found_node->index + 1;
             mode = READ;
@@ -82,7 +80,6 @@ void get_structure(TempRegister *reg) {
             exit(0);
         }
     } else {
-        printf("Chegou aqui 4!");
         fail = 1;
         printf("O programa falhou em unificar!\n");
         exit(0);
@@ -98,20 +95,26 @@ void get_value(){
 }
 
 /* Unify Instructions */
-void unify_variable(TempRegister *reg){
-    Node *token;
+void unify_variable(int reg_num){
+    DataType *data;
+    Node *cell;
+    XRegister *reg;
+
     switch (mode) {
         case WRITE:
-            token = (Node*)malloc(sizeof(Node));
-            // x_i <- heap[h]
-            reg->data->heap_ref = heap_register;
-            token = create_node(reg->data, heap_register);
-            // heap[h] <- <REF H>
-            heap_insert_head(token);
+            // HEAP[H] = <REF, H>
+            data = create_data(REF_SYMBOL, heap_register, NULL);
+            cell = create_node(data, heap_register);
+            heap_insert_head(cell);
+            // Xi = HEAP[H]
+            reg = create_register(reg_num, data);
+            // H = H + 1
             heap_register += 1;
             break;
         case READ:
-            reg->data->heap_ref = subterm_register;
+            // Xi = HEAP[S]
+            cell = find_in_heap(subterm_register);
+            create_register(reg_num, cell->data);
             break;
         default:
             break;
@@ -119,17 +122,23 @@ void unify_variable(TempRegister *reg){
     subterm_register += 1;
 }
 
-void unify_value(TempRegister *reg) {
-    Node *token;
+void unify_value(int reg_num) {
+    Node *cell;
+    DataType *new_data;
+    XRegister *reg;
 
     switch (mode) {
         case WRITE:
-            token = (Node*)malloc(sizeof(Node));
-            token = create_node(reg->data, heap_register);
-            heap_insert_head(token); // heap[h] <- Xi
+            // HEAP[H] = Xi
+            reg = find_register(reg_num);
+            new_data = create_data(reg->data->data_type, reg->data->heap_ref, NULL);
+            cell = create_node(new_data, heap_register);
+            heap_insert_head(cell);
+            // H = H + 1
             heap_register += 1;
             break;
         case READ:
+            reg = find_register(reg_num);
             unify(reg->data->heap_ref, subterm_register);
             break;
 
@@ -156,15 +165,19 @@ PDLNode *create_pdl_node(int addr){
 }
 
 void unify(int addr1, int addr2) {
-    STACK_PUSH(pdl, create_pdl_node(addr1));
-    STACK_PUSH(pdl, create_pdl_node(addr2));
+    PDLNode *element;
+    element = create_pdl_node(addr1);
+    STACK_PUSH(pdl, element);
+    element = create_pdl_node(addr2);
+    STACK_PUSH(pdl, element);
     fail = 0;
-    while (!(pdl != NULL || fail == 1)){
+
+    while (!(pdl == NULL || fail == 1)){
         int d1, d2;
         PDLNode *elt;
-        STACK_POP(pdl,elt);
+        STACK_POP(pdl, elt);
         d1 = deref(elt->address);
-        STACK_POP(pdl,elt);
+        STACK_POP(pdl, elt);
         d2 = deref(elt->address);
         if (d1 != d2) {
             DataType *data1, *data2;
@@ -174,12 +187,28 @@ void unify(int addr1, int addr2) {
                 bind(d1, d2);
             } else {
                 Tag *tag1, *tag2;
-                tag1 = find_in_heap(data1->heap_ref)->data->tag;
-                tag2 = find_in_heap(data2->heap_ref)->data->tag;
+                int local_ref_1, local_ref_2;
+                if (data1->data_type == TAG_SYMBOL) {
+                    tag1 = data1->tag;
+                    local_ref_1 = d1;
+                } else {
+                    tag1 = find_in_heap(data1->heap_ref)->data->tag;
+                    local_ref_1 = data1->heap_ref;
+                }
+                if (data1->data_type == TAG_SYMBOL) {
+                    tag2 = data2->tag;
+                    local_ref_2 = d2;
+                } else {
+                    tag2 = find_in_heap(data2->heap_ref)->data->tag;
+                    local_ref_2 = data2->heap_ref;
+                }
+
                 if(strcmp(tag1->name, tag2->name) == 0) {
                     for (int i = 1; i <= tag1->arity; i++){
-                        STACK_PUSH(pdl, create_pdl_node(data1->heap_ref+i));
-                        STACK_PUSH(pdl, create_pdl_node(data2->heap_ref+i));
+                        element = create_pdl_node(local_ref_1+i);
+                        STACK_PUSH(pdl, element);
+                        element = create_pdl_node(local_ref_2+i);
+                        STACK_PUSH(pdl, element);
                     }
                 } else {
                     fail = 1;
@@ -195,11 +224,11 @@ void bind(int addr1, int addr2){
     Node *n1, *n2;
     n1 = find_in_heap(addr1);
     n2 = find_in_heap(addr2);
-    if ((n1->data->heap_ref == -1)&&(n2->data->heap_ref >= 0)){
+    if ((n1->data->heap_ref == n1->index)&&(n2->data->heap_ref != n2->index)){
         n1->data->heap_ref = n2->data->heap_ref;
-    } else if  ((n1->data->heap_ref >= 0)&&(n2->data->heap_ref == -1)) {
+    } else if  ((n1->data->heap_ref != n1->index)&&(n2->data->heap_ref == n2->index)) {
         n2->data->heap_ref = n1->data->heap_ref;
     } else {
-        n1->data->heap_ref = n2->data->heap_ref;
+        n2->data->heap_ref = n1->data->heap_ref;
     }
 }

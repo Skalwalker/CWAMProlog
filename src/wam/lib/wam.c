@@ -6,70 +6,75 @@ PDLNode *pdl = NULL;
 void execute_wam(TreeNode *root, int query_prog){
     if (query_prog == 0) {
         destroy_heap();
+        reg_counter = 1;
+        free_reg_map();
+        free_xregisters();
         heap = create_heap();
         register_names(root);
-        print_registers();
+        printf("\n======================== Instruções da Query ========================\n");
         query_token_stream(root);
+        printf("=====================================================================\n");
     } else if (query_prog == 1) {
         reg_counter = 1;
-        table_reg_delete();
+        free_reg_map();
         register_names(root);
-        print_registers();
+        printf("\n======================== Instruções de Unificação ========================\n");
         prog_token_stream(root);
+        printf("==========================================================================\n");
+        printf("\n======================== Heap Após Unificar ========================\n");
+        print_heap_reversed();
+        printf("======================================================================\n");
     }
 }
 
-void map_instruction(TempRegister *reg, int occ, int init, int inst_type) {
+void map_instruction(TreeNode *str, RegMapping *reg_map, int inst_type, int data_type) {
+    int reg_num = reg_map->reg_num;
+
     if (inst_type == QUERY_INSTR) {
-        if (occ == 1){
-            printf("set_value X%d\n", reg->num);
-            set_value(reg);
+        if (reg_map->occ != 0){
+            printf("set_value X%d\n", reg_num);
+            set_value(reg_num);
         } else {
-            if (reg->data->data_type == STR_SYMBOL) {
-                printf("put_structure %s X%d\n", reg->data->tag->name, reg->num);
-                put_structure(reg);
-            } else if (reg->data->data_type == REF_SYMBOL){
-                printf("set_variable X%d\n", reg->num);
-                set_variable(reg);
+            if (data_type == STR_SYMBOL) {
+                printf("put_structure %s X%d\n", str->str_data->nome, reg_num);
+                put_structure(str->str_data, reg_num);
+            } else if (data_type == REF_SYMBOL){
+                printf("set_variable X%d\n", reg_num);
+                set_variable(reg_num);
             }
         }
     } else if (inst_type == PROG_INSTR) {
-        if ((occ == 1)&&(reg->data->data_type == REF_SYMBOL)){
-            printf("unify_value X%d\n", reg->num);
-            unify_value(reg);
+        if ((reg_map->occ != 0)&&(data_type == REF_SYMBOL)){
+            printf("unify_value X%d\n", reg_num);
+            unify_value(reg_num);
         } else {
-            if (reg->data->data_type == STR_SYMBOL) {
-                if (init == 1){
-                    printf("get_structure %s X%d\n", reg->data->tag->name, reg->num);
-                    get_structure(reg);
+            if (data_type == STR_SYMBOL) {
+                if ((reg_map->occ != 0)||(reg_num == 1)){
+                    printf("get_structure %s X%d\n", str->str_data->nome, reg_num);
+                    get_structure(str->str_data, reg_num);
                 } else {
-                    printf("unify_variable X%d\n", reg->num);
-                    unify_variable(reg);
+                    printf("unify_variable X%d\n", reg_num);
+                    unify_variable(reg_num);
                 }
-            } else if (reg->data->data_type == REF_SYMBOL){
-                printf("unify_variable X%d\n", reg->num);
-                unify_variable(reg);
+            } else if (data_type == REF_SYMBOL){
+                printf("unify_variable X%d\n", reg_num);
+                unify_variable(reg_num);
             }
         }
     }
-
-    // print_heap();
 }
 
-void process_token(TreeNode *node, int init, int inst_type) {
+void process_token(TreeNode *node, int inst_type) {
+    RegMapping *reg_map;
 
     if (node->node_type == NODE_TERM) {
-        RegTable *reg = table_reg_lookup(node->term_data->nome);
-        // add_stream(reg->reg);
-        // printf("X%d = %s \n", reg->reg_num, node->term_data->nome);
-        map_instruction(reg->reg, reg->on_stream, init, inst_type);
-        reg->on_stream = 1;
+        reg_map = find_reg_map(node->term_data->nome);
+        map_instruction(NULL, reg_map, inst_type, REF_SYMBOL);
+        reg_map->occ = 1;
     } else if (node->node_type == NODE_STR) {
-        RegTable *reg = table_reg_lookup(node->str_data->nome);
-        // add_stream(reg->reg);
-        // printf("X%d = %s \n", reg->reg_num, node->term_data->nome);
-        map_instruction(reg->reg, reg->on_stream, init, inst_type);
-        reg->on_stream = 1;
+        reg_map = find_reg_map(node->str_data->nome);
+        map_instruction(node, reg_map, inst_type, STR_SYMBOL);
+        reg_map->occ = 1;
     }
 
     return;
@@ -144,10 +149,10 @@ void prog_token_stream(TreeNode* root) {
 
         if (node->node_type == NODE_TERM) {
             if (node->term_data != NULL) {
-                process_token(node, current->inited, PROG_INSTR);
+                process_token(node, PROG_INSTR);
             }
         } else if (node->node_type == NODE_STR) {
-            process_token(node, current->inited, PROG_INSTR);
+            process_token(node, PROG_INSTR);
             first = 1;
         }
 
@@ -168,11 +173,11 @@ void query_token_children(TreeNode* root) {
 
     if (root->node_type == NODE_TERM) {
         if (root->term_data != NULL) {
-            process_token(root, 0, QUERY_INSTR);
+            process_token(root, QUERY_INSTR);
             return;
         }
     } else if (root->node_type == NODE_STR) {
-        process_token(root, 0, QUERY_INSTR);
+        process_token(root, QUERY_INSTR);
         return;
     }
 
@@ -199,7 +204,7 @@ void query_token_stream(TreeNode* root) {
     query_token_stream(right);
 
     if (root->node_type == NODE_STR) {
-        process_token(root, 0, QUERY_INSTR);
+        process_token(root, QUERY_INSTR);
         query_token_children(root->left);
         query_token_children(root->right);
     }
@@ -207,19 +212,19 @@ void query_token_stream(TreeNode* root) {
 
 void allocate_reg_table(TreeNode *node) {
     TermData* term;
-    DataType* data;
-    Tag* new_tag;
+    // DataType* data;
+    // Tag* new_tag;
 
     if (node->node_type == NODE_TERM) {
         term = node->term_data;
         if (term != NULL) {
-            data = create_data(REF_SYMBOL, -1, NULL);
-            table_add_reg(term->nome, data);
+            // data = create_data(REF_SYMBOL, -1, NULL);
+            map_reg(term->nome);
         }
     } else if (node->node_type == NODE_STR) {
-        new_tag = create_tag(node->str_data->nome, node->str_data->arity);
-        data = create_data(STR_SYMBOL, -2, new_tag);
-        table_add_reg(node->str_data->nome, data);
+        // new_tag = create_tag(node->str_data->nome, node->str_data->arity);
+        // data = create_data(STR_SYMBOL, -2, new_tag);
+        map_reg(node->str_data->nome);
     }
 
 }
@@ -254,15 +259,3 @@ void register_names(TreeNode* root) {
         }
     }
 }
-
-// p(Z, h(Z, W), f(W)).
-//
-// Flattened
-//
-// X3 = h(X2, X5)
-// X4 = f(X5)
-// X1 = p(X2, X3, X4)
-//
-// Tokenized
-//
-// [X3 (h/3), X2, X5, X4(f/1), X5, X1(p/3), X2, X3, X4]

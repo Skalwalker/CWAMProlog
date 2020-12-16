@@ -30,7 +30,7 @@ Node *fetch_node(int address) {
     Node* current = heap->head;
 
     if (current == NULL) {
-        printf("Empty Heap\n");
+        // printf("Empty Heap\n");
         return NULL;
     }
 
@@ -130,7 +130,7 @@ int print_heap(){
     char temp[4];
 
     if (current == NULL) {
-        printf("Empty Heap\n");
+        // printf("Empty Heap\n");
         return HEAP_EMPTY;
     }
 
@@ -156,7 +156,7 @@ int print_heap_reversed() {
     char temp[4];
 
     if (current == NULL) {
-        printf("Empty Heap\n");
+        // printf("Empty Heap\n");
         return HEAP_EMPTY;
     }
 

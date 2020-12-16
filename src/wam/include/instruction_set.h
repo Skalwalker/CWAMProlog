@@ -17,22 +17,22 @@ extern Heap *heap;
 extern PDLNode *pdl;
 
 /* Put Instructions */
-void put_structure(TempRegister *reg);
+void put_structure(StrData *str, int reg_num);
 void put_variable();
 void put_value();
 
 /* Set Instructions */
-void set_variable(TempRegister *reg);
-void set_value(TempRegister *reg);
+void set_variable(int reg_num);
+void set_value(int reg_num);
 
 /* Get Instructions */
-void get_structure(TempRegister *reg);
+void get_structure(StrData *tag, int reg_num);
 void get_variable();
 void get_value();
 
 /* Unify Instructions */
-void unify_variable(TempRegister *reg);
-void unify_value(TempRegister *reg);
+void unify_variable(int reg_num);
+void unify_value(int reg_num);
 
 int deref(int address);
 void unify();

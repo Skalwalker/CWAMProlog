@@ -10,7 +10,6 @@ SymbolTable *s_table = NULL;
 
 
 void load_program(){
-    print_heap();
     FILE* fp;
     fp = fopen(file_name, "r");
     yyin = fp;
@@ -22,20 +21,19 @@ void load_program(){
 void load_query(char *query){
     yy_scan_string(query);
     yyparse(0, 0);
-    print_heap();
+    printf("\n======================== Heap da Query ========================\n");
+    print_heap_reversed();
+    printf("===============================================================\n");
     yylex_destroy();
 }
 
 void process_query(){
     char query[500];
     printf("?- ");
-    while (1) {
-        scanf("%[^\n]s", query);
-        getchar();
-        load_query(query);
-        load_program();
-        printf("\n?- ");
-    }
+    scanf("%[^\n]s", query);
+    getchar();
+    load_query(query);
+    load_program();
 }
 
 int main(int argc, char **argv){

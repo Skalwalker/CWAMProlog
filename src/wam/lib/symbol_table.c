@@ -30,8 +30,6 @@ int st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
     SymbolTable *s;
     char key[100];
     create_key(key, name, pos);
-    printf("%s", key);
-
     HASH_FIND_STR(s_table, key, s);
 
     if(s==NULL){
@@ -48,7 +46,6 @@ int st_add_symbol(int symbol, char *name, int arity, int pos, int var_type) {
           strcat(newname, ":");
           sprintf(occstr, "%d", s->occ);
           strcat(newname, occstr);
-          printf("%s", newname);
           create_key(newkey, newname, pos);
           s = create_symbol(newkey, symbol, newname, var_type, arity, pos, s->occ);
           HASH_ADD_STR(s_table, key, s);

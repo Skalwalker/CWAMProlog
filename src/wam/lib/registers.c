@@ -1,84 +1,98 @@
 #include "../include/registers.h"
 
-RegTable *r_table = NULL;
-RegStream *stream = NULL;
+XRegister *registers = NULL;
+RegMapping *reg_map = NULL;
 
 int reg_counter = 1;
-
 int heap_register = 0;
 int subterm_register = 0;
 
-void add_stream(TempRegister *reg){
-    RegStream *new;
-    new = (RegStream*)malloc(sizeof(RegStream));
-    new->reg = reg;
-    LL_APPEND(stream, new);
-}
 
-RegTable *table_reg_lookup(char *nome) {
-    RegTable *reg;
-    HASH_FIND_STR(r_table, nome, reg);
+XRegister *create_register(int num, DataType *data){
+    XRegister *reg;
+
+    HASH_FIND_INT(registers, &num, reg);
+
+    if (reg == NULL) {
+      reg = (XRegister*)malloc(sizeof(XRegister));
+      reg->reg_num = num;
+      reg->data = data;
+      HASH_ADD_INT(registers, reg_num, reg);
+    } else {
+      reg->data = data;
+    }
+
     return reg;
 }
 
-int table_add_reg(char *name, DataType *data) {
-
-    RegTable *new;
-    TempRegister *reg;
-
-
-    HASH_FIND_STR(r_table, name, new);
-
-    if(new==NULL){
-        new = (RegTable*)malloc(sizeof(RegTable));
-        strcpy(new->name, name);
-        new->reg_num = reg_counter;
-        reg = create_register(reg_counter, data);
-        new->reg = reg;
-        new->on_stream = 0;
-        HASH_ADD_STR(r_table, name, new);
-        reg_counter += 1;
-        return new->reg_num;
-    } else {
-        return -1;
-    }
+XRegister *find_register(int id) {
+    XRegister *reg;
+    HASH_FIND_INT(registers, &id, reg);
+    return reg;
 }
 
-void table_reg_delete() {
-  RegTable *current_table, *tmp;
+void free_xregisters() {
+  XRegister *current_table, *tmp;
 
-  HASH_ITER(hh, r_table, current_table, tmp) {
-    HASH_DEL(r_table,current_table);
+  HASH_ITER(hh, registers, current_table, tmp) {
+    HASH_DEL(registers,current_table);
     free(current_table);
   }
 }
 
-void print_registers() {
-    RegTable *r;
+
+int map_reg(char *name) {
+
+    RegMapping *new;
+
+    HASH_FIND_STR(reg_map, name, new);
+
+    if(new==NULL){
+        new = (RegMapping*)malloc(sizeof(RegMapping));
+        strcpy(new->name, name);
+        new->reg_num = reg_counter;
+        new->occ = 0;
+        reg_counter += 1;
+        HASH_ADD_STR(reg_map, name, new);
+        return new->reg_num;
+    }
+
+    return -1;
+}
+
+RegMapping *find_reg_map(char *name) {
+
+    RegMapping *reg;
+
+    HASH_FIND_STR(reg_map, name, reg);
+
+    if(reg==NULL){
+        return NULL;
+    }
+
+    return reg;
+}
+
+void free_reg_map() {
+  RegMapping *current_table, *tmp;
+
+  HASH_ITER(hh, reg_map, current_table, tmp) {
+    HASH_DEL(reg_map,current_table);
+    free(current_table);
+  }
+}
+
+
+void print_xregisters() {
+    XRegister *r;
     printf("\n==========REG TABLE==========\n");
-    for(r=r_table; r != NULL; r=r->hh.next) {
-        printf("KEY %s: Reg_Number %d\n", r->name,  r->reg_num);
-        printf("  Register %d Data:\n", r->reg->num);
-        printf("      Data Type %d\n", r->reg->data->data_type);
-        printf("      Heap Ref %d\n", r->reg->data->heap_ref);
+    for(r=registers; r != NULL; r=r->hh.next) {
+        // printf("KEY %s: Reg_Number %d\n", r->name,  r->reg_num);
+        // printf("  Register %d Data:\n", r->reg->num);
+        // printf("      Data Type %d\n", r->reg->data->data_type);
+        // printf("      Heap Ref %d\n", r->reg->data->heap_ref);
     }
     printf("=============================\n");
-}
-
-void print_stream() {
-    RegStream *reg;
-    printf("\n");
-    LL_FOREACH(stream,reg) {
-        printf("X%d ", reg->reg->num);
-    }
-    printf("\n");
-}
-
-TempRegister* create_register(int num, DataType *data){
-    TempRegister *reg = (TempRegister*)malloc(sizeof(TempRegister));
-    reg->num = num;
-    reg->data = data;
-    return reg;
 }
 
 

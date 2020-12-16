@@ -6,32 +6,29 @@
 #include "utlist.h"
 #include "../../parser/arvore.h"
 
-typedef struct temp_register {
-    int num;
-    DataType *data;
-} TempRegister;
-
-typedef struct reg_table {
+typedef struct reg_map{
     char name[100];
     int reg_num;
-    int on_stream;
-    TempRegister *reg;
+    int occ;
     UT_hash_handle hh;
-} RegTable;
+} RegMapping;
 
-typedef struct reg_stream {
-    TempRegister *reg;
-    struct reg_stream *prev;
-    struct reg_stream *next;
-} RegStream;
+typedef struct x_register {
+    int reg_num;
+    DataType *data;
+    UT_hash_handle hh;
+} XRegister;
 
-RegTable *table_reg_lookup(char *nome);
-int table_add_reg(char *name, DataType *data);
-TempRegister* create_register(int num, DataType *data);
-void table_reg_delete();
+int use_register();
+
+XRegister *find_register(int id);
+XRegister *create_register(int num, DataType *data);
+void free_xregisters();
+
+int map_reg(char *name);
+RegMapping *find_reg_map(char *name);
+void free_reg_map();
 
 void print_registers();
-void print_stream();
-void add_stream(TempRegister *reg);
 
 #endif

@@ -7,7 +7,7 @@ typedef struct pdl_node PDLNode;
 
 typedef struct pdl_node {
     int address;
-    PDLNode *next, *prev;
+    PDLNode *next;
 } PDLNode;
 
 typedef struct tag {
